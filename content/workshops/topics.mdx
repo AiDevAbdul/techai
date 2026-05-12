@@ -1,0 +1,99 @@
+---
+# Workshop topics catalog — rendered into the accordion on /workshops.
+# 10–15 items per spec §7.5. Keep each `summary` to ~30–45 words so the
+# expanded panel reads like a single thought, not a brochure.
+topics:
+  - title: "Workflow audit, taught as a method"
+    audience: "Operators · Team leads"
+    summary: >
+      The exact 90-minute audit I run with clients, broken down into a
+      reusable workshop. Participants leave with a one-page hypothesis for
+      a workflow on their own desk — problem, architecture sketch, stack,
+      first cut.
+
+  - title: "Context engineering for ops teams"
+    audience: "Ops · Customer success · Internal tooling"
+    summary: >
+      Why most "AI in the workflow" attempts fail at the context layer, not
+      the model. We rebuild a real intake flow live: schemas, retrieval,
+      tool selection, and how to measure context quality before you spend
+      a token.
+
+  - title: "Routing brains over chat UIs"
+    audience: "Product · Engineering"
+    summary: >
+      The hands-on case for replacing chat surfaces with deterministic
+      routing brains. We design one together — intents, tools, guardrails,
+      fallback paths — then stub it in TypeScript so the room sees the
+      seams.
+
+  - title: "Eval-first development for AI features"
+    audience: "Engineering · QA"
+    summary: >
+      Evals are the unit tests of the agent era. We write five evals before
+      the first feature lands, then watch them catch regressions live as we
+      tune prompts and swap models. Cost + latency tracked from minute one.
+
+  - title: "Prompt caching, model fallback, observability"
+    audience: "Engineering · Platform"
+    summary: >
+      The production trio nobody teaches: ephemeral cache_control so prompts
+      stay cheap, AI Gateway for provider fallback, and the three traces
+      every agent system needs. Sample dashboards walk-through.
+
+  - title: "Workflows over chatbots — for non-technical teams"
+    audience: "Operators · Sales · Marketing"
+    summary: >
+      A non-code session for teams adopting AI without engineering support.
+      We map three workflows your team already runs, decide which two
+      should become agents, and write the spec a developer can build from.
+
+  - title: "Building agents with the AI SDK (v6)"
+    audience: "Engineering"
+    summary: >
+      A code-along workshop using Vercel's AI SDK v6. We ship a tool-using
+      agent end-to-end: streaming UI, tool calls, structured output, eval
+      hooks. Bring your editor; you'll leave with a deployable repo.
+
+  - title: "From notebook to production: shipping an AI feature"
+    audience: "ML · Engineering · Product"
+    summary: >
+      The handoff path most teams trip on. We take a working notebook and
+      cross every line: API surface, caching, error modes, cost ceilings,
+      rollout. Output is a feature flag-gated release plan, not a slide.
+
+  - title: "AI for Pakistani SMBs — the Urdu-friendly playbook"
+    audience: "South Asian SMBs · Community organizers"
+    summary: >
+      Urdu and English, both rooms. The constraints that matter here:
+      payment rails, WhatsApp-first customers, offline-capable workflows,
+      and which models actually work on Roman-script Urdu. Built for the
+      region, not translated to it.
+
+  - title: "Designing for trust in agentic UIs"
+    audience: "Design · Product · Engineering"
+    summary: >
+      The visual language of agent surfaces — when to stream, when to pause
+      for confirmation, how to show provenance, where loading states lie.
+      We redesign one screen from your product, live.
+
+  - title: "Cost-aware AI architecture"
+    audience: "Engineering · Finance · Founders"
+    summary: >
+      A spreadsheet-and-stack workshop. We model the real cost of three
+      architectures for the same workflow: chat, routed agent, cached
+      pipeline. By the end the room knows which architecture survives at
+      10× usage and which one bankrupts you.
+
+  - title: "Replacing six SaaS tools with one routed workflow"
+    audience: "Operators · Heads of ops"
+    summary: >
+      A pattern I've shipped three times. We pick a real subscription stack
+      from the room, draw the integration graph, and design the routed
+      replacement — including the migration order so you don't tear the
+      plane apart mid-flight.
+---
+
+Editorial notes (not rendered): rotate the "AI for Pakistani SMBs" topic to
+the top when the audience is a community cohort. Drop "Designing for trust"
+if the room is purely engineering.

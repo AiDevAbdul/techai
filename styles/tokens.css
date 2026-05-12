@@ -1,0 +1,182 @@
+/*
+ * Design tokens — verbatim from docs/spec.md §5.
+ * Edits land via a spec amendment + decisions-log entry, not silent drift.
+ *
+ * Theme model: light is the default. `:root[data-theme="dark"]` is the dark
+ * override. `:root[data-theme="system"]` (or no attribute) means: defer to
+ * `prefers-color-scheme`. The no-flash bootstrap script in <head> sets the
+ * attribute before paint, so toggle changes never strobe.
+ */
+
+:root {
+  /* ── 5.2 Color — Surface ─────────────────────────────────────────── */
+  --bg:              #FBFBFD;
+  --bg-elevated:     #FFFFFF;
+  --bg-secondary:    #F5F5F7;
+  --bg-tertiary:     #EFEFF1;
+  --bg-inset:        #F2F2F4;
+
+  /* Label / ink — Apple system-label parity */
+  --label-primary:   #1D1D1F;
+  --label-secondary: #6E6E73;
+  --label-tertiary:  #86868B;
+  --label-quaternary:#C7C7CC;
+
+  /* Separators — hairlines, NOT borders */
+  --separator:       color-mix(in oklab, #000 12%, transparent);
+  --separator-opaque:#D2D2D7;
+
+  /* Brand accent — forest green */
+  --accent:          #15573D;
+  --accent-hover:    #114730;
+  --accent-pressed:  #0D3923;
+  --accent-soft:     #E8F0EA;
+  --accent-ring:     color-mix(in oklab, #15573D 35%, transparent);
+  /*
+   * Foreground when *on* an accent background (filled buttons).
+   * Light theme: dark accent → white text passes AAA at 7:1+.
+   * Dark theme overrides this below with a dark ink, since the dark accent
+   * is mint and white text on mint fails WCAG AA (~1.6:1).
+   */
+  --accent-on:       #FFFFFF;
+
+  /* Semantic */
+  --success:         #15573D;
+  --warning:         #B25E09;
+  --danger:          #B3261E;
+
+  /* Code */
+  --code-bg:         #F4F2EC;
+  --code-ink:        #1D1D1F;
+
+  /* Materials — sticky nav + modal backdrops only */
+  --material-thick:  rgba(255,255,255,0.78);
+  --material-regular:rgba(255,255,255,0.66);
+  --material-thin:   rgba(255,255,255,0.50);
+  --material-blur:   saturate(180%) blur(20px);
+
+  /* ── 5.3 Typography — stacks ─────────────────────────────────────── */
+  /*
+   * --font-fraunces and --font-jetbrains-mono are injected at runtime by
+   * next/font/google via a className on <html>. The fallback chains below
+   * cover the case where the variables aren't applied (SSR streaming, fonts
+   * still loading, or non-Apple devices without SF).
+   */
+  --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+  --font-text:    ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  --font-mono:    var(--font-jetbrains-mono, ui-monospace), "SF Mono", Menlo, Consolas, monospace;
+  --font-serif:   var(--font-fraunces, ui-serif), "New York", Charter, Georgia, serif;
+
+  /* Type scale — Apple Marketing approximation */
+  --t-eyebrow:    0.75rem;
+  --t-caption:    0.8125rem;
+  --t-footnote:   0.875rem;
+  --t-body:       1.0625rem;
+  --t-callout:    1.1875rem;
+  --t-headline:   1.4375rem;
+  --t-title3:     1.75rem;
+  --t-title2:     2.25rem;
+  --t-title1:     3rem;
+  --t-display:    4.25rem;
+  --t-display-xl: 5.5rem;
+
+  /* Tracking */
+  --track-display: -0.022em;
+  --track-title:   -0.014em;
+  --track-body:     0;
+  --track-eyebrow:  0.06em;
+
+  /* Leading */
+  --lh-display: 1.05;
+  --lh-title:   1.1;
+  --lh-body:    1.5;
+  --lh-tight:   1.25;
+
+  /* ── 5.5 Radius ──────────────────────────────────────────────────── */
+  --radius-xs:   6px;
+  --radius-sm:   10px;
+  --radius-md:   14px;
+  --radius-lg:   18px;
+  --radius-xl:   24px;
+  --radius-2xl:  32px;
+  --radius-pill: 999px;
+
+  /* Elevation — one shadow token, used sparingly */
+  --shadow-pop: 0 1px 1px rgba(0,0,0,0.04), 0 10px 30px -10px rgba(0,0,0,0.08);
+
+  /* ── 5.7 Motion ──────────────────────────────────────────────────── */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur-fast:    180ms;
+  --dur-med:     260ms;
+  --dur-slow:    360ms;
+}
+
+/* Dark theme — toggle only, NOT default */
+:root[data-theme="dark"] {
+  --bg:              #0B0B0D;
+  --bg-elevated:     #131316;
+  --bg-secondary:    #161618;
+  --bg-tertiary:     #1C1C1F;
+  --bg-inset:        #18181B;
+
+  --label-primary:   #F5F5F7;
+  --label-secondary: #A1A1A6;
+  --label-tertiary:  #6E6E73;
+  --label-quaternary:#3A3A3C;
+
+  --separator:       color-mix(in oklab, #FFF 14%, transparent);
+  --separator-opaque:#2C2C2E;
+
+  --accent:          #6EC79A;
+  --accent-hover:    #84D2AB;
+  --accent-pressed:  #5BB789;
+  --accent-soft:     #1B2D24;
+  --accent-ring:     color-mix(in oklab, #6EC79A 35%, transparent);
+  --accent-on:       #0B0B0D; /* dark ink on mint — ~10:1, passes AAA */
+
+  --code-bg:         #1A1A1D;
+  --code-ink:        #F5F5F7;
+
+  --material-thick:  rgba(20,20,22,0.72);
+  --material-regular:rgba(20,20,22,0.58);
+  --material-thin:   rgba(20,20,22,0.40);
+}
+
+/*
+ * System theme — when data-theme="system" (or unset), follow OS preference.
+ * The bootstrap script writes "system" explicitly when the stored choice is
+ * "system" so this selector is reliable.
+ */
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --bg:              #0B0B0D;
+    --bg-elevated:     #131316;
+    --bg-secondary:    #161618;
+    --bg-tertiary:     #1C1C1F;
+    --bg-inset:        #18181B;
+
+    --label-primary:   #F5F5F7;
+    --label-secondary: #A1A1A6;
+    --label-tertiary:  #6E6E73;
+    --label-quaternary:#3A3A3C;
+
+    --separator:       color-mix(in oklab, #FFF 14%, transparent);
+    --separator-opaque:#2C2C2E;
+
+    --accent:          #6EC79A;
+    --accent-hover:    #84D2AB;
+    --accent-pressed:  #5BB789;
+    --accent-soft:     #1B2D24;
+    --accent-ring:     color-mix(in oklab, #6EC79A 35%, transparent);
+    --accent-on:       #0B0B0D;
+
+    --code-bg:         #1A1A1D;
+    --code-ink:        #F5F5F7;
+
+    --material-thick:  rgba(20,20,22,0.72);
+    --material-regular:rgba(20,20,22,0.58);
+    --material-thin:   rgba(20,20,22,0.40);
+  }
+}

@@ -1,0 +1,100 @@
+---
+slug: context-engineering-for-ops-teams
+title: "Context engineering for ops teams"
+date: "2026-05-13"
+summary: "Prompts are the smallest part of an AI workflow. The largest is the surrounding context — what the model can see, what it should ignore, and what shape its answers should arrive in."
+category: "Practice"
+readingTime: 7
+---
+
+The first three months of building agent workflows for operators taught me a
+short, embarrassing lesson: **the prompt is the smallest part of the system.**
+The largest part is everything around it — the documents the model can read,
+the tools it can call, the schema the answer has to land in, and the
+guardrails that quietly drop the request when the inputs don't fit.
+
+Engineers call this *context engineering*. Operators don't have a word for it
+yet, which is part of why I'm writing this. If you run a team, this is the
+half of the problem you're allowed to weigh in on without writing any code.
+
+## What "context" actually is
+
+Strip away the jargon and a model's context is just four things:
+
+1. **The system instructions** — what role the model is playing and what it
+   absolutely must not do. Static. Re-read every turn.
+2. **The reference material** — the documents, the policy, the prior
+   transcript. Dynamic. Fetched fresh per request from a search index, a
+   database, or — most commonly — a folder.
+3. **The current ask** — the user's actual message right now.
+4. **The tools** — the named operations the model can invoke instead of
+   guessing (`lookup_customer`, `book_meeting`, `escalate_to_human`).
+
+A bad workflow is one where the operator has tried to compensate for missing
+context by making the prompt longer. A good workflow is one where the prompt
+is short because the context is correctly scoped.
+
+## The signal-to-noise rule
+
+The instinct, when an agent gets something wrong, is to throw more text at
+the prompt. *"You are a helpful customer-service agent who always remembers
+that customers from Karachi might be on a 9:30 AM call and never confirms
+shipping until the warehouse is open and also be polite."* That's a prompt
+that started as a haiku and ended as a contract.
+
+Almost every time, the right fix is the opposite — **less, but better
+indexed**. A 200-token instruction with a precise tool definition will beat a
+1,500-token instruction every time, because the model can no longer hide
+its uncertainty in the noise of your prompt.
+
+The rule I run on every audit: if the prompt is over a page, ask which lines
+are routinely violated. Move those lines into tool definitions or into the
+runtime check that follows the model's output. Keep the prompt for things the
+model needs to *be*, not things it needs to *remember*.
+
+## Why operators get to weigh in
+
+Most context decisions are not technical — they're editorial. A few examples
+from the field:
+
+- **Which past conversations matter.** If a customer wrote in three months
+  ago to ask about pricing, does that matter today when they're asking about
+  shipping? Engineers will default to "always include the last ten
+  conversations." Operators usually have a sharper instinct: include the
+  ones with the same intent, ignore the rest.
+- **Which fields are signal.** A CRM record has 47 fields. The model
+  should probably see three. Picking the three is an editorial call, and
+  the operator running the workflow every day has lived with which three.
+- **Which answers need shape.** Most operator workflows produce a structured
+  artifact — a quote, a reply email, a triage label. The shape of that
+  artifact is the most useful thing you can ship the model. Operators
+  already know the shape; engineers have to be told.
+
+If your AI workflow rollout has stalled, it's almost never because the model
+isn't good enough. It's because the editorial decisions above were never
+made — they were left for the engineer to guess at, and the engineer guessed
+wrong because they don't run the workflow.
+
+## The three-week test
+
+A practical heuristic I now run on the second week of every engagement:
+**count the tokens in your prompt and count the tokens in your retrieval
+results.** If the prompt is longer than the retrieved context, the workflow
+is undercooked. The team has compensated for missing context by writing
+longer rules. Three weeks in, the ratio should have inverted.
+
+When it does invert, two things happen quickly: the latency drops (shorter
+prompts, smaller responses), and the model gets harder to confuse. That is
+the entire shape of a system maturing.
+
+## Where to start
+
+You don't need an audit to start. Two questions, asked of the people running
+the workflow:
+
+1. **What does the answer look like when it's right?** (Shape it.)
+2. **What do you find yourself re-explaining every time?** (Index it.)
+
+Everything else — the model, the framework, the deploy target — is downstream
+of those two answers. Pick the workflow where the answers are clearest, ship
+that one first, and tell me how it goes.

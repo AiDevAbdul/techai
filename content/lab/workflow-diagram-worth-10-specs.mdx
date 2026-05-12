@@ -1,0 +1,98 @@
+---
+slug: workflow-diagram-worth-10-specs
+title: "One workflow diagram is worth ten specs"
+date: "2026-05-06"
+summary: "If you can't draw the system on a whiteboard in five minutes, you don't understand it yet — and neither will the team that has to maintain it."
+category: "Practice"
+readingTime: 5
+---
+
+Almost every AI project I've audited has a specification document, and almost
+none of them have a diagram. This is a problem, because the spec describes
+*what the system should do* and the diagram describes *how it actually
+works.* For an agent workflow — where the answer to "what happens next" is
+itself a probability distribution — the second is the one that pays the
+salaries.
+
+## What the diagram has to show
+
+A useful workflow diagram is unremarkable on purpose. Five elements:
+
+1. **Sources** — where requests enter. Slack, email, a form, a webhook, a
+   cron. Not "the user" — be specific.
+2. **The routing brain** — the small piece of inference that decides which
+   path the request takes. Almost always an LLM with a tiny prompt and
+   three or four named outputs.
+3. **The handlers** — what happens on each branch. One per output of the
+   router. Some are tools (deterministic), some are themselves prompts
+   (probabilistic), most are a mix.
+4. **The trust line** — the visible boundary between *the model decided this*
+   and *we deterministically did this*. Audits live on this line.
+5. **The memory store** — what persists between turns. Usually thinner than
+   teams expect: a transcript, a few extracted fields, a handful of tags.
+
+That's it. Five elements, half an A4 page. If your diagram needs more, you've
+either embedded the future on it (skip the future) or the system is doing too
+much (rescope it).
+
+## The five-minute rule
+
+I run a small test on every kickoff call: ten minutes in, I ask the founder
+or ops lead to draw the workflow on the whiteboard. Not the AI part — the
+whole thing, end to end. The numbers from the last twenty engagements:
+
+- About a third can draw it in five minutes. Those are easy projects.
+- About a third draw it in fifteen and discover, mid-drawing, that two
+  branches collide. Those are the projects worth taking — the diagram
+  surfaced a real ambiguity before any code got written.
+- The final third can't draw it at all. Those projects need a discovery
+  workshop, not a build. We rewrite the engagement on the spot.
+
+The diagnostic value of *drawing the thing* is so high that I've stopped
+writing specs first. The spec is downstream of the diagram, not the other
+way round.
+
+## What a spec hides that a diagram surfaces
+
+Specs are linear; agent workflows are branching. The spec says, *"the agent
+classifies the request and routes it to the correct handler."* The diagram
+forces you to name the handlers. Once the handlers are named, three things
+become obvious:
+
+- **Which branches are deterministic.** A routing label is one decision; the
+  handler that consumes it usually is not. Diagrams expose the difference
+  by visually separating *model outputs* from *deterministic operations*.
+- **Where the trust line lives.** Operators want to know which decisions
+  they can override and which they can audit later. The spec tends to bury
+  this; the diagram has to draw it.
+- **What persists, and for whom.** Memory is the part teams overinvest in.
+  Drawing it forces a question: who reads this in 30 days? If the answer
+  is "no one," delete it.
+
+## A diagram for this very page
+
+The system that produced the page you're reading is itself a four-element
+workflow:
+
+1. **Source** — a Markdown file checked into the repo.
+2. **Routing brain** — none. Static content. The "agent" here is a build.
+3. **Handler** — Next.js renders the MDX. Tailwind sets the type. The CDN
+   serves the result.
+4. **Trust line** — invisible, because nothing about this page is
+   probabilistic. That's the right choice for an essay; it's the wrong
+   choice for a quote generator.
+
+The point of drawing this is the same as drawing any other workflow: it
+forces you to confront which parts are deterministic, which parts have to be,
+and which parts you've quietly hoped will work because the demo did. If
+you're three weeks into an agent project and you can't sketch the diagram on
+the back of an envelope, the project hasn't started yet.
+
+## A small habit worth picking up
+
+If you take one thing from this note: **before you ship a system prompt,
+draw the workflow.** Two columns of boxes, three arrows, a memory store at
+the bottom. Keep it next to the prompt in the repo, version it together,
+and require a new diagram on every architecture change. The discipline
+sounds silly until it saves you the third time you discover a workflow
+collision in production.

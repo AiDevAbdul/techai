@@ -1,26 +1,189 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "../styles/tokens.css";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * shadcn/ui dark-mode variant.
+ *
+ * shadcn primitives use `dark:` Tailwind variants gated by a `.dark` class.
+ * We don't manage themes via a class — the no-flash bootstrap writes
+ * `<html data-theme="…">`. This `@custom-variant` rebinds shadcn's `dark:`
+ * to our attribute selector so `dark:` utilities in any primitive light up
+ * automatically when our theme attribute is set to dark (explicitly or via
+ * `prefers-color-scheme` when "system").
+ */
+@custom-variant dark (&:is([data-theme="dark"] *, [data-theme="system"][data-prefers-dark="true"] *));
 
+/*
+ * Tailwind v4 theme mapping.
+ *
+ * Two layers stacked here:
+ *
+ *  1. Spec-token aliases (`--color-surface`, `--color-ink`, `--color-accent`)
+ *     → enable our own ergonomic utilities (`bg-surface`, `text-ink`,
+ *     `text-accent`). These are the primary author-facing utilities.
+ *
+ *  2. shadcn-compat aliases (`--color-primary`, `--color-background`,
+ *     `--color-border`, …) → re-route shadcn's expected token names at OUR
+ *     spec colors so primitives inherit forest-green + Apple HIG instead of
+ *     the default neutral oklch palette. Don't touch the names — shadcn
+ *     primitives reference them literally.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ── Spec tokens (1) ──────────────────────────────────────────────── */
+  --color-surface:           var(--bg);
+  --color-surface-elevated:  var(--bg-elevated);
+  --color-surface-secondary: var(--bg-secondary);
+  --color-surface-tertiary:  var(--bg-tertiary);
+  --color-surface-inset:     var(--bg-inset);
+
+  --color-ink:               var(--label-primary);
+  --color-ink-secondary:     var(--label-secondary);
+  --color-ink-tertiary:      var(--label-tertiary);
+  --color-ink-quaternary:    var(--label-quaternary);
+
+  --color-separator:         var(--separator);
+  --color-separator-opaque:  var(--separator-opaque);
+
+  --color-accent:            var(--accent);
+  --color-accent-hover:      var(--accent-hover);
+  --color-accent-pressed:    var(--accent-pressed);
+  --color-accent-soft:       var(--accent-soft);
+
+  --color-success:           var(--success);
+  --color-warning:           var(--warning);
+  --color-danger:            var(--danger);
+
+  --color-code-bg:           var(--code-bg);
+  --color-code-ink:          var(--code-ink);
+
+  /* Fonts */
+  --font-display: var(--font-display);
+  --font-text:    var(--font-text);
+  --font-mono:    var(--font-mono);
+  --font-serif:   var(--font-serif);
+  --font-sans:    var(--font-display); /* fallback for any shadcn `font-sans` references */
+
+  /*
+   * Type scale → Tailwind v4 font-size utilities.
+   * Spec tokens are named `--t-*` (kept that way for direct CSS references).
+   * Tailwind v4 generates `text-{name}` utilities only from `--text-{name}`,
+   * with line-height paired via the `--text-{name}--line-height` companion.
+   * Apple HIG leading: body 1.5, headline/title 1.1, display 1.05.
+   */
+  --text-eyebrow:                var(--t-eyebrow);
+  --text-eyebrow--line-height:   1.25;
+  --text-caption:                var(--t-caption);
+  --text-caption--line-height:   1.4;
+  --text-footnote:               var(--t-footnote);
+  --text-footnote--line-height:  1.4;
+  --text-body:                   var(--t-body);
+  --text-body--line-height:      1.5;
+  --text-callout:                var(--t-callout);
+  --text-callout--line-height:   1.45;
+  --text-headline:               var(--t-headline);
+  --text-headline--line-height:  1.25;
+  --text-title3:                 var(--t-title3);
+  --text-title3--line-height:    1.15;
+  --text-title2:                 var(--t-title2);
+  --text-title2--line-height:    1.1;
+  --text-title1:                 var(--t-title1);
+  --text-title1--line-height:    1.08;
+  --text-display:                var(--t-display);
+  --text-display--line-height:   1.05;
+  --text-display-xl:             var(--t-display-xl);
+  --text-display-xl--line-height:1.04;
+
+  /* Radii — overrides Tailwind defaults to match Apple HIG continuous curves */
+  --radius-xs:   var(--radius-xs);
+  --radius-sm:   var(--radius-sm);
+  --radius-md:   var(--radius-md);
+  --radius-lg:   var(--radius-lg);
+  --radius-xl:   var(--radius-xl);
+  --radius-2xl:  var(--radius-2xl);
+  --radius-pill: var(--radius-pill);
+
+  /* ── shadcn-compat aliases (2) ────────────────────────────────────── */
+  --color-background:          var(--bg);
+  --color-foreground:          var(--label-primary);
+
+  --color-card:                var(--bg-elevated);
+  --color-card-foreground:     var(--label-primary);
+
+  --color-popover:             var(--bg-elevated);
+  --color-popover-foreground:  var(--label-primary);
+
+  --color-primary:             var(--accent);
+  --color-primary-foreground:  var(--accent-on);
+
+  --color-secondary:           var(--bg-secondary);
+  --color-secondary-foreground:var(--label-primary);
+
+  --color-muted:               var(--bg-secondary);
+  --color-muted-foreground:    var(--label-secondary);
+
+  --color-accent-foreground:   var(--accent-on);
+
+  --color-destructive:         var(--danger);
+  --color-destructive-foreground: #FFFFFF;
+
+  --color-border:              var(--separator-opaque);
+  --color-input:               var(--separator-opaque);
+  --color-ring:                var(--accent-ring);
+
+  /* shadcn uses --radius as a single source for derived corner sizes */
+  --radius: var(--radius-md);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base ────────────────────────────────────────────────────────────── */
+
+html {
+  background: var(--bg);
+  color: var(--label-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-text);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  letter-spacing: var(--track-body);
+}
+
+/* Tabular nums for any element that wants Apple-style metric rows */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hero serifs — Fraunces with optical sizing engaged */
+.serif {
+  font-family: var(--font-serif);
+  font-variation-settings: "opsz" auto;
+}
+
+/* ── Focus ring (spec §5.1 / §9) ─────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/*
+ * Reduced motion — spec §5.7 + §9.
+ * Hard override: collapse durations and disable transforms. Individual
+ * components can re-opt-in via `motion-safe:` Tailwind variant when the
+ * animation is content-bearing (e.g. streaming caret).
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

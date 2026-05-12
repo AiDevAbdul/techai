@@ -1,0 +1,72 @@
+---
+slug: marketing-dash
+title: "Marketing Dash — Daily channel reports without the morning slog"
+eyebrow: "Marketing · 2025"
+client: "DAC Marketing Co."
+duration: "5 weeks"
+year: 2025
+summary: "Daily channel reports drafted in 4 minutes, not 4 hours — by treating the report as a review surface, not a generation prompt."
+metrics:
+  - { value: "4 min vs 4 hrs", label: "draft time per daily report" }
+  - { value: "82%", label: "drafts shipped without rewrite" }
+  - { value: "6 channels", label: "normalized into one schema" }
+heroDiagram: "/diagrams/marketing-dash-architecture.svg"
+stack: ["Next.js", "AI SDK", "Anthropic", "BigQuery", "Vercel", "Resend", "Plausible"]
+testimonial:
+  quote: "I used to write the same paragraph six times before coffee. Now I edit one draft and send. The numbers I argue with are already on the page."
+  author: "Hira Mansoor"
+  role: "Growth Lead, DAC Marketing Co."
+order: 2
+---
+
+## The Problem
+
+The growth team's first four hours every morning went to pulling numbers
+from six dashboards and writing the same shape of paragraph six times.
+The bottleneck was not the data — it was the rewriting. By the time the
+report went out, the day's decisions had already been made on yesterday's
+gut feel.
+
+## The System
+
+A nightly ingestion job pulls from Google Analytics, Plausible, Meta Ads,
+Google Ads, the CRM, and the email platform into one normalized BigQuery
+schema. A summarizer pass runs over the normalized rows with the prior
+seven days as context and produces a structured draft — headline,
+movements, anomalies, next actions — that lands in an operator console
+at 6am. The operator edits, approves, and Resend ships it to the
+distribution list.
+
+The decision that mattered most: **the AI does not generate the report,
+it drafts the review surface.** The draft is intentionally a step short
+of send-ready — every anomaly links back to the BigQuery row that
+triggered it, and every claim shows its source channel. The operator
+spends 4 minutes confirming and tightening, not 4 hours writing.
+
+## What I built
+
+- Nightly ingest job normalizing 6 channels into one BigQuery schema.
+- Anomaly pass using rolling 7-day baselines, not single-day deltas.
+- Structured drafter on Claude via AI SDK with a strict JSON schema.
+- Operator console showing draft, source rows, and one-click edits.
+- Resend distribution with per-recipient channel filtering.
+- Audit log of every draft, every edit, every send — queryable by date.
+
+## Outcome
+
+"I used to write the same paragraph six times before coffee. Now I edit
+one draft and send. The numbers I argue with are already on the page."
+Eighty-two percent of drafts ship with no structural rewrite; the team
+moved its planning standup from 11am to 9:15am because the report is
+ready first.
+
+## What I'd do differently
+
+I underweighted the operator console in the first two weeks and spent
+that time tightening the prompt. The model was 90% there on day five,
+but the team didn't trust an unaudited paragraph — they wanted to see
+which BigQuery row triggered each anomaly call before they would put
+their name on the send. If I started over I would ship the source-row
+drill-down on day three, before the second prompt iteration, and let
+the model quality catch up alongside it. Legibility built adoption;
+prompt polish only built my own comfort.

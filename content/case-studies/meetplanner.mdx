@@ -1,0 +1,65 @@
+---
+slug: meetplanner
+title: "MeetPlanner — Hybrid meeting orchestration"
+eyebrow: "Operations · 2024"
+client: "MeetPlanner Inc."
+duration: "4 weeks"
+year: 2024
+summary: "Cut scheduling friction 70% for distributed teams by routing intent — not calendar slots — through a small agentic system."
+metrics:
+  - { value: "70%", label: "less scheduling friction" }
+  - { value: "12 hrs/wk", label: "reclaimed per team" }
+  - { value: "4 weeks", label: "from kickoff to MVP" }
+heroDiagram: "/diagrams/meetplanner-architecture.svg"
+stack: ["Next.js", "Postgres", "OpenAI", "Vercel", "Resend"]
+testimonial:
+  quote: "We stopped negotiating calendars. The system reads the intent and proposes a meeting that already works."
+  author: "Sara Iqbal"
+  role: "Head of Operations, MeetPlanner Inc."
+order: 1
+---
+
+## The Problem
+
+MeetPlanner's ops team spent the first two hours of every day stitching
+together meetings across four time zones, two calendar systems, and a Slack
+backlog that didn't sleep. The bottleneck wasn't the calendar — it was the
+intent. Most meetings could be a 15-minute async checkpoint, but the request
+shape ("can we sync?") hid the actual need.
+
+## The System
+
+A small agentic pipeline sits between the request channel (Slack + email) and
+the calendar. It classifies the intent — *decision*, *status*, *unblock*,
+*pairing* — and routes the request to the lightest format that resolves it.
+Only the residual ~30% of requests reach the calendar; the rest get
+async-templated replies the team can edit and send.
+
+The decision that mattered most: **the system never proposes a meeting time
+without first proposing not having the meeting.** Removing a meeting is
+cheaper than scheduling one, and the model surfaces that option first.
+
+## What I built
+
+- Intent classifier on `claude-3-5-sonnet` with a tight schema (4 classes, no free text).
+- Slack + email connectors using thread-safe deduping (one workflow per intent).
+- Postgres-backed routing table per team with `team_id × intent → format` rules.
+- A 15-minute checkpoint template generator (markdown + Resend transactional send).
+- Edge function for calendar-handoff only when the routing rule says "schedule".
+- An operator console that shows what got *not-scheduled* and why.
+
+## Outcome
+
+Eleven of fourteen teams adopted the system in the first month. The ops lead
+who used to triage at 9am now reviews three operator-console digests per
+week. Across the org we measured a 70% drop in scheduling rounds per
+resolved request and an average 12 hours per week reclaimed per team.
+
+## What I'd do differently
+
+I overweighted classifier accuracy in week one and underweighted the
+operator console. Teams trust a system they can audit; they don't trust a
+system that's quietly right. If I started over I'd ship the console on day
+three with a hand-labelled corpus and let model quality catch up over the
+next two weeks. The system's *legibility* moved adoption more than its
+precision did.

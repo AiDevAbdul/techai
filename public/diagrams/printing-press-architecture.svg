@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">Printing press order-to-quote architecture</title>
+  <desc id="desc">WhatsApp and email order intake feed a spec parser that extracts paper, size, finish, and quantity. A Postgres pricing table produces a quote draft for operator approval, then the confirmed quote is sent via WhatsApp or Resend. An operator console and audit log read from the pricing table.</desc>
+  <defs>
+    <style>
+      .bg { fill: #FBFBFD; }
+      .node { fill: #FFFFFF; stroke: #D2D2D7; stroke-width: 1; }
+      .node-accent { fill: #E8F0EA; stroke: #15573D; stroke-width: 1.25; }
+      .label { font-family: ui-sans-serif, -apple-system, "SF Pro Text", system-ui, sans-serif; font-size: 14px; fill: #1D1D1F; }
+      .label-sm { font-family: ui-sans-serif, -apple-system, "SF Pro Text", system-ui, sans-serif; font-size: 11px; fill: #6E6E73; letter-spacing: 0.06em; text-transform: uppercase; }
+      .arrow { stroke: #6E6E73; stroke-width: 1.25; fill: none; }
+      .arrow-accent { stroke: #15573D; stroke-width: 1.5; fill: none; }
+    </style>
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6E6E73"/>
+    </marker>
+    <marker id="arrowhead-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#15573D"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="960" height="480"/>
+
+  <!-- Sources -->
+  <text x="56" y="56" class="label-sm">Intake</text>
+  <rect class="node" x="40" y="80" width="180" height="60" rx="14"/>
+  <text x="130" y="116" class="label" text-anchor="middle">WhatsApp Business</text>
+  <rect class="node" x="40" y="170" width="180" height="60" rx="14"/>
+  <text x="130" y="206" class="label" text-anchor="middle">Email inbox</text>
+
+  <!-- Parser -->
+  <text x="320" y="56" class="label-sm">Spec parser</text>
+  <rect class="node-accent" x="290" y="120" width="200" height="80" rx="14"/>
+  <text x="390" y="155" class="label" text-anchor="middle" font-weight="500">Spec parser</text>
+  <text x="390" y="178" class="label-sm" text-anchor="middle" style="text-transform:none;letter-spacing:0">paper · size · finish · qty</text>
+
+  <!-- Pricing engine -->
+  <text x="580" y="56" class="label-sm">Pricing</text>
+  <rect class="node-accent" x="550" y="120" width="200" height="80" rx="14"/>
+  <text x="650" y="155" class="label" text-anchor="middle" font-weight="500">Pricing engine</text>
+  <text x="650" y="178" class="label-sm" text-anchor="middle" style="text-transform:none;letter-spacing:0">cost table + margin rules</text>
+
+  <!-- Quote draft -->
+  <text x="820" y="56" class="label-sm">Approval</text>
+  <rect class="node-accent" x="780" y="120" width="160" height="80" rx="14"/>
+  <text x="860" y="155" class="label" text-anchor="middle" font-weight="500">Quote draft</text>
+  <text x="860" y="178" class="label-sm" text-anchor="middle" style="text-transform:none;letter-spacing:0">operator confirm</text>
+
+  <!-- Flow edges -->
+  <path class="arrow" d="M220,110 C250,110 260,150 290,150" marker-end="url(#arrowhead)"/>
+  <path class="arrow" d="M220,200 C250,200 260,170 290,170" marker-end="url(#arrowhead)"/>
+  <path class="arrow-accent" d="M490,160 L550,160" marker-end="url(#arrowhead-accent)"/>
+  <path class="arrow-accent" d="M750,160 L780,160" marker-end="url(#arrowhead-accent)"/>
+
+  <!-- Memory · audit row -->
+  <text x="56" y="296" class="label-sm">Memory · audit</text>
+
+  <rect class="node" x="40" y="320" width="240" height="64" rx="14"/>
+  <text x="160" y="356" class="label" text-anchor="middle">Pricing table (Postgres)</text>
+
+  <rect class="node" x="340" y="320" width="240" height="64" rx="14"/>
+  <text x="460" y="356" class="label" text-anchor="middle">Operator console</text>
+
+  <rect class="node" x="640" y="320" width="280" height="64" rx="14"/>
+  <text x="780" y="356" class="label" text-anchor="middle">Send · WhatsApp + Resend</text>
+
+  <!-- Memory edges -->
+  <path class="arrow" d="M280,352 L340,352" marker-end="url(#arrowhead)"/>
+  <path class="arrow" d="M580,352 L640,352" marker-end="url(#arrowhead)"/>
+  <path class="arrow" d="M160,320 C160,260 240,200 290,180" marker-end="url(#arrowhead)"/>
+  <path class="arrow" d="M650,200 L650,260 L460,260 L460,320" marker-end="url(#arrowhead)"/>
+  <path class="arrow-accent" d="M860,200 L860,280 L780,280 L780,320" marker-end="url(#arrowhead-accent)"/>
+
+  <!-- Legend -->
+  <line x1="40" y1="430" x2="60" y2="430" class="arrow"/>
+  <text x="68" y="434" class="label-sm" style="text-transform:none;letter-spacing:0">data flow</text>
+  <line x1="160" y1="430" x2="180" y2="430" class="arrow-accent"/>
+  <text x="188" y="434" class="label-sm" style="text-transform:none;letter-spacing:0">quote path</text>
+</svg>

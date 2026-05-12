@@ -1,0 +1,47 @@
+---
+slug: printing-press
+title: "Printing Press — Order intake to quote in under 90 seconds"
+eyebrow: "Manufacturing · 2025"
+client: "Lahore-based printing house"
+duration: "6 weeks"
+year: 2025
+summary: "Routed WhatsApp order intake to a priced quote in under 90 seconds end-to-end, without changing the operator's existing workflow."
+metrics:
+  - { value: "<90s", label: "order intake to quote" }
+  - { value: "11x", label: "more quotes per operator-day" }
+  - { value: "6 weeks", label: "from kickoff to live" }
+heroDiagram: "/diagrams/printing-press-architecture.svg"
+stack: ["Next.js", "Postgres", "Anthropic", "AI SDK", "WhatsApp Business API", "Resend", "Vercel"]
+testimonial:
+  quote: "Customer sends a photo of last year's wedding card on WhatsApp. Before I finish my chai the quote is on my screen, I press send."
+  author: "Imran Sheikh"
+  role: "Production manager, Lahore-based printing house"
+order: 3
+---
+
+## The Problem
+
+Quotes took the shop between forty minutes and two days, depending on who was at the desk and whether the customer remembered the GSM. Every order arrived differently — a WhatsApp photo of last year's job, a phone call asking for "the same as before but gold foil this time", an email with a half-spec. The bottleneck wasn't pricing; it was translating an irregular request into the four variables the press actually runs on: paper, size, finish, quantity.
+
+## The System
+
+A WhatsApp Business webhook and an email inbox feed a parser that extracts a structured spec — stock, GSM, dimensions, finish (lamination, foil, spot UV), quantity — from photos, voice notes, and free text. The spec hits a Postgres pricing table that the owner maintains by hand: cost per sheet by GSM, finish multipliers, minimum run rules, margin bands by customer tier. A quote draft lands in an operator console with the parsed spec, the chosen price line, and a one-tap WhatsApp reply.
+
+The decision that mattered most: **the operator stays in the loop on every send, but the system never asks them to type a number.** Pricing is the owner's territory and changes weekly with paper rates; the model never invents a price, it only retrieves and explains one. The operator's job shrinks to confirm-or-correct, not author-from-scratch.
+
+## What I built
+
+- WhatsApp + email intake with photo and voice-note ingestion.
+- Spec parser on Claude with a strict 4-field schema, no free text.
+- Postgres pricing table the owner edits in a plain admin grid.
+- Operator console with parsed spec, price line, and one-tap send.
+- Resend fallback for customers who started by email.
+- Audit log per quote: input, parsed spec, price line, sent reply.
+
+## Outcome
+
+The production manager went from drafting six or seven quotes a day to confirming seventy-plus. Customers who used to wait until evening got a price before the chai cooled. The owner kept full control of the pricing table — she edits it Tuesday mornings when the paper market shifts — and the system never touches a number she hasn't approved.
+
+## What I'd do differently
+
+I underweighted the photo-only intake path in week one. I assumed customers would describe the job in text and attach a photo as backup; in practice eight out of ten messages were a photo plus three words ("same as this, 500 pieces"). The parser worked, but the first version asked too many clarifying questions because I hadn't trained it on the actual message shapes. If I started over I'd ship with a hundred real WhatsApp threads from the shop's archive on day three, before writing a line of the pricing logic. The intake is the whole product; the pricing engine is the easy half.
