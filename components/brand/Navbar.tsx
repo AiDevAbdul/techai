@@ -73,12 +73,11 @@ export default function Navbar() {
       )}
     >
       <Container as="nav" aria-label="Primary" className="flex items-center justify-between py-3">
-        <Link
-          href="/"
-          className="serif text-ink text-headline -tracking-[0.01em]"
-          aria-label="Abdul Wahab — Home"
-        >
-          Abdul Wahab
+        <Link href="/" aria-label="Abdul Wahab — Home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Abdul." width={116} height={28} className="dark:hidden" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-white.svg" alt="Abdul." width={116} height={28} className="hidden dark:block" />
         </Link>
 
         {/* Desktop nav */}
