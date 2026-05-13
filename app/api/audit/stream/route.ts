@@ -1,4 +1,5 @@
-import { streamText, gateway } from "ai";
+import { streamText } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import { AUDIT_SYSTEM_PROMPT } from "@/lib/audit/prompt";
 import {
@@ -91,7 +92,7 @@ export async function POST(req: Request): Promise<Response> {
 
   try {
     const result = streamText({
-      model: gateway("anthropic/claude-sonnet-4-6"),
+      model: anthropic("claude-sonnet-4-6"),
       system: AUDIT_SYSTEM_PROMPT,
       messages,
       maxOutputTokens: AUDIT_TURN_TOKEN_CAP,
@@ -104,7 +105,7 @@ export async function POST(req: Request): Promise<Response> {
 
     return result.toTextStreamResponse();
   } catch (err) {
-    console.error("[audit/stream] gateway error", err);
+    console.error("[audit/stream] provider error", err);
     return Response.json(
       {
         error: "gateway_unavailable",
