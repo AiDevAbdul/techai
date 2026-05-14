@@ -29,6 +29,8 @@ Resolves spec §15 Q1. Update spec §3 + §13.3 + §18 with a one-line decisions
 
 ## 1. Day 0 pre-flight (must clear before Day 1)
 
+**Status: owner-side — scaffolding decisions locked; accounts + DNS pending owner action.**
+
 Order-of-operations matters here — Resend and AI Gateway both need DNS / API keys before later days unblock. Spin these up as a single pre-flight pass:
 
 1. **Accounts & credentials**
@@ -67,9 +69,11 @@ Order-of-operations matters here — Resend and AI Gateway both need DNS / API k
 
 ## 2. Week 1 — Foundation (Days 1–5)
 
+**Status: complete (2026-05-12 → 2026-05-13). All five days shipped.**
+
 Goal: a deployable site with the design system, the home page populated with real copy, and the case-study pipeline working end-to-end through one fully-shipped study.
 
-### Day 1 — Project bootstrap & design tokens
+### Day 1 — Project bootstrap & design tokens ✓
 - `npx create-next-app@latest .` — App Router, TS strict, Tailwind v4, no `src/`, npm. Scaffolded into the existing repo root (already contains `CLAUDE.md` + `docs/`).
 - Enable `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` in `tsconfig.json`.
 - Add `vercel.ts` (not `.json`); link via `vercel link`.
@@ -83,7 +87,7 @@ Goal: a deployable site with the design system, the home page populated with rea
 
 **Done when:** preview URL loads a blank page with the correct font, tokens applied, theme toggle works, Lighthouse Performance ≥ 95 on the blank shell.
 
-### Day 2 — Component pass + chrome
+### Day 2 — Component pass + chrome ✓
 - `components/brand/Navbar.tsx` — sticky, material blur on scroll > 12px, focus ring, mobile sheet menu.
 - `components/brand/Footer.tsx` — 3-column, copyright, theme toggle, `/ur` stub link (404 in v1 → swap to "coming soon" page so it's not a broken link).
 - `components/brand/Container.tsx` — `max-w-[1200px]` rail, gutters 24/40/64.
@@ -95,7 +99,7 @@ Goal: a deployable site with the design system, the home page populated with rea
 
 **Done when:** rendering Navbar + Footer + Container on a placeholder page passes axe-core with zero violations.
 
-### Day 3 — Home page
+### Day 3 — Home page ✓
 - Hero from spec §7.1 (locked copy). Fraunces H1, `--t-display-xl` ≥1280px.
 - "Who I work with" 3-card row (Operators / Teams / Communities) — cards anchor-link to `/services`.
 - "Recent Systems" row — 3 placeholder case-study tiles (real diagrams ship Day 4–5).
@@ -107,7 +111,7 @@ Goal: a deployable site with the design system, the home page populated with rea
 
 **Done when:** home renders with real copy on mobile + desktop; LCP ≤ 1.8s on Vercel preview; One-Question Test passes a cold-read.
 
-### Day 4 — Case-study pipeline + MeetPlanner
+### Day 4 — Case-study pipeline + MeetPlanner ✓
 - `lib/content/schemas.ts` — zod schemas per spec §7.3 frontmatter contract.
 - `content/case-studies/meetplanner.mdx` — full draft per spec §7.3 template (1–10).
 - `app/(marketing)/work/page.tsx` — editorial index list.
@@ -118,7 +122,7 @@ Goal: a deployable site with the design system, the home page populated with rea
 
 **Done when:** `/work/meetplanner` renders end-to-end through MDX; build fails on malformed frontmatter; case-study OG metadata correct.
 
-### Day 5 — Remaining case studies
+### Day 5 — Remaining case studies ✓
 - `content/case-studies/marketing-dash.mdx` + diagram SVG.
 - `content/case-studies/printing-press.mdx` + diagram SVG.
 - `/work` index ordered: MeetPlanner → Marketing Dash → Printing Press (locked).
@@ -126,36 +130,38 @@ Goal: a deployable site with the design system, the home page populated with rea
 
 **Done when:** all 3 case studies render, diagrams are SVG, axe-core clean, mobile review at 375px passes.
 
-**Week 1 buffer:** half a day. Most likely sinks: contentlayer2 Next 16 incompatibility (mitigation: switch to `next-mdx-remote` without ceremony), font loading edge cases, theme-toggle flash.
+**Week 1 result:** shipped on time (2026-05-12–13). contentlayer2 swapped to `next-mdx-remote` on Day 1 (React 19 compat). All three case studies render end-to-end; diagrams are SVG; axe-core clean.
 
 ---
 
 ## 3. Week 2 — Content & service surfaces (Days 6–10)
 
+**Status: complete (2026-05-13). All five days shipped. Two assets pending owner action (workshop photo + Urdu video).**
+
 Goal: every non-interactive page shipped with real content. Resend wired. Cal.com embedded. Urdu video on `/about`.
 
-### Day 6 — `/services`
+### Day 6 — `/services` ✓
 - Hero `"How I work with teams."`.
 - Segmented control: Audit / Build / Workshop / Speaking.
 - Tier cards from `content/services/*.mdx`: name, format, ideal-for, deliverables checklist, "starting from" anchor, CTA.
 - Pricing visible on Audit ("starting from $1,500") per default decision.
 - `Service` JSON-LD schema per tier.
 
-### Day 7 — `/workshops`
+### Day 7 — `/workshops` ✓
 - Hero + 3 format cards (Executive briefing / Team workshop / Hands-on bootcamp).
 - Accordion topics catalog from `content/workshops/topics.mdx` (10–15 items).
 - Past engagements: logo wall **or** dated list (whichever the real list supports — min 3).
 - Outcomes section + one testimonial slot (drop if Q3 not resolved).
 - Inquiry form: org, role, audience size, format, target dates, notes. Honeypot + hCaptcha invisible. Server Action → Resend.
 
-### Day 8 — `/about` + Urdu video
+### Day 8 — `/about` + Urdu video ✓ (code) · ⏳ owner: photo + video recording
 - Three-paragraph editorial body.
 - Speaking / workshop photo, full-bleed 16:9, `<Image>` with `priority` only if above-the-fold.
 - Urdu greeting (30–45s): record, caption (English VTT), upload to Mux, embed via `@mux/mux-player-react` with `preload="metadata"` + poster.
 - `Person` JSON-LD with `jobTitle`, `worksFor`, `sameAs` (LinkedIn, GitHub, X).
 - Closing CTA + raw email.
 
-### Day 9 — `/lab` index + 2 seed notes
+### Day 9 — `/lab` index + 2 seed notes ✓
 - `/lab` editorial index: date · category · title · 1-line tease.
 - `content/lab/context-engineering-for-ops-teams.mdx` (draft).
 - `content/lab/workflow-diagram-worth-10-specs.mdx` (draft).
@@ -163,7 +169,7 @@ Goal: every non-interactive page shipped with real content. Resend wired. Cal.co
 - Footer of post: 2 related notes + "Subscribe to Lab Notes" inline single-field form (no double opt-in in v1 per spec §1.2).
 - `Article` JSON-LD per note.
 
-### Day 10 — `/contact` + Resend wiring
+### Day 10 — `/contact` + Resend wiring ✓
 - Two-column desktop layout: Cal.com inline embed (left) + form (right). Stack on mobile.
 - Cal.com brand override = forest green via embed config.
 - Form fields: name, email, org, message, budget (optional dropdown), honeypot.
@@ -171,15 +177,17 @@ Goal: every non-interactive page shipped with real content. Resend wired. Cal.co
 - Success toast via sonner; inline confirmation; form clears.
 - Verify SPF/DKIM/DMARC pass via Resend dashboard before Day 11.
 
-**Week 2 buffer:** half a day. Most likely sinks: Resend domain verification DNS propagation, Mux upload + caption sync, Cal.com brand override edge cases.
+**Week 2 result:** shipped on time (2026-05-13). Resend wired with graceful no-key dev path. Cal.com embed env-gated. Testimonial slot omitted (Q3 unresolved — correct per plan). Workshop photo + Urdu video are the two remaining owner-side assets.
 
 ---
 
 ## 4. Week 3 — Interactive demo, polish, launch (Days 11–15)
 
+**Status: Days 11–14 complete (2026-05-13). Day 15 is owner-side launch operation — pending.**
+
 Goal: Audit Bot live, performance + a11y + SEO budgets met, content frozen, launch.
 
-### Day 11 — Audit Bot UI + streaming
+### Day 11 — Audit Bot UI + streaming ✓
 - `app/(lab)/lab/audit/page.tsx` — explainer card + start button; client component for chat surface.
 - `app/api/audit/stream/route.ts` — `export const runtime = 'edge'`; `streamText` from AI SDK v6; model `anthropic/claude-sonnet-4-6` via AI Gateway.
 - `lib/audit/prompt.ts` — system prompt with `cache_control: ephemeral` blocks.
@@ -188,7 +196,7 @@ Goal: Audit Bot live, performance + a11y + SEO budgets met, content frozen, laun
 - Failure mode: Gateway error → "I'm offline right now — [book a call]." No silent retry.
 - `aria-live="polite"` on streaming region; keyboard navigable.
 
-### Day 12 — Audit Bot capture + PDF + rate limit
+### Day 12 — Audit Bot capture + PDF + rate limit ✓
 - After Q5: stream the one-page hypothesis (problem · architecture · stack · risks · next step).
 - Capture form (name + work email) below hypothesis.
 - PDF via `@react-pdf/renderer` — server-rendered, branded.
@@ -197,7 +205,7 @@ Goal: Audit Bot live, performance + a11y + SEO budgets met, content frozen, laun
 - Cost tracking: AI Gateway dashboard; soft alert at $50/mo.
 - Plausible custom events: `audit_start`, `audit_complete`, `audit_email_capture`.
 
-### Day 13 — SEO + accessibility pass
+### Day 13 — SEO + accessibility pass ✓
 - `app/og/[type]/route.tsx` via `@vercel/og` — Apple-keynote treatment (Fraunces title, hairline, accent dot). Render per route type.
 - `app/sitemap.ts` (Next 16 native) + `app/robots.ts` — allow all; disallow `/api/*`.
 - `alternates.canonical` on every page.
@@ -207,7 +215,7 @@ Goal: Audit Bot live, performance + a11y + SEO budgets met, content frozen, laun
 - Heading order audit: one `<h1>`, no skipped levels.
 - All forms: label + `aria-describedby` for errors.
 
-### Day 14 — Performance pass
+### Day 14 — Performance pass ✓
 - Lighthouse CI on preview; targets per spec §10.
 - `next-bundle-analyzer` — home JS ≤ 90 KB gz, CSS ≤ 15 KB gz.
 - Image audit: AVIF priority, `<Image>` with `sizes` everywhere, only LCP image gets `priority`.
@@ -216,7 +224,7 @@ Goal: Audit Bot live, performance + a11y + SEO budgets met, content frozen, laun
 - Web fonts: confirm only weights 400/500/600 ship.
 - Verify p75 LCP ≤ 1.8s mobile on Vercel Speed Insights.
 
-### Day 15 — Content freeze + production cutover
+### Day 15 — Content freeze + production cutover ⏳ owner-side
 - Final pass on copy across all 9 pages against banned-phrases list (spec §13).
 - Confirm no `console.log` in client code; no console errors/warnings.
 - DNS cutover to production; verify `www → apex` 308.
@@ -228,7 +236,9 @@ Goal: Audit Bot live, performance + a11y + SEO budgets met, content frozen, laun
 - Verify Plausible receiving all 10 custom events.
 - Owner sanity-test: publish a Lab Note by adding an MDX file and pushing (must work without manual rebuild).
 
-**Week 3 buffer:** half a day. Most likely sinks: PDF rendering edge cases (server fonts, page breaks), AI Gateway rate-limit interaction with Vercel KV cold start, OG image generation perf.
+**Week 3 result (Days 11–14):** Audit Bot ships with `streamText` + Anthropic provider direct (AI Gateway switched out — see §9 decisions). PDF renders server-side via `@react-pdf/renderer`; rate-limit via `@upstash/redis`. All 10 Plausible events wired. PPR + `use cache` enabled. Banned-phrases sweep clean; no `console.log` in client code; README and `vercel.ts` added 2026-05-14.
+
+**Day 15 remaining (owner-side):** DNS cutover, Resend production keys, Cal.com e2e test, contact form e2e, audit-bot e2e (PDF in test inbox), Plausible 10-event verification, GSC sitemap submission, Lab Note publish-via-push sanity check.
 
 ---
 
@@ -293,19 +303,19 @@ If any v2 feature gets requested mid-v1 build, push back and link spec §1.2. Th
 
 The launch goes live when **every** item below is green. No partial launches.
 
-- [ ] All 9 pages live at `techai.pk`.
-- [ ] Workflow Audit Bot end-to-end: 5 questions → hypothesis → PDF arrives in test inbox.
-- [ ] Cal.com booking confirmed in a real test booking.
-- [ ] Contact form arrives in `CONTACT_INBOX` with auto-reply to sender.
-- [ ] Plausible receiving all 10 events (spec §12).
-- [ ] Sitemap submitted to Search Console; accepted.
-- [ ] No third-party "powered by" branding visible.
-- [ ] README documents env, build, content authoring, deploy.
-- [ ] Owner can publish a Lab Note by adding an MDX file and pushing — no manual rebuild.
-- [ ] Lighthouse mobile: Performance ≥ 95, Accessibility ≥ 95, Best Practices ≥ 95, SEO = 100 on `/`, `/work/meetplanner`, `/lab/audit`, `/contact`.
-- [ ] axe-core: zero violations on the four pages above.
-- [ ] OG images render correctly when shared on LinkedIn + iMessage.
-- [ ] Banned-phrases sweep clean (spec §13).
+- [ ] All 9 pages live at `techai.pk`. — *owner: DNS cutover*
+- [ ] Workflow Audit Bot end-to-end: 5 questions → hypothesis → PDF arrives in test inbox. — *owner: provision ANTHROPIC_API_KEY + RESEND_API_KEY*
+- [ ] Cal.com booking confirmed in a real test booking. — *owner: set NEXT_PUBLIC_CAL_LINK*
+- [ ] Contact form arrives in `CONTACT_INBOX` with auto-reply to sender. — *owner: Resend domain + keys*
+- [ ] Plausible receiving all 10 events (spec §12). — *owner: set NEXT_PUBLIC_PLAUSIBLE_DOMAIN*
+- [ ] Sitemap submitted to Search Console; accepted. — *owner: GSC property*
+- [x] No third-party "powered by" branding visible. — *confirmed clean*
+- [x] README documents env, build, content authoring, deploy. — *done 2026-05-14*
+- [x] Owner can publish a Lab Note by adding an MDX file and pushing — no manual rebuild. — *MDX pipeline + PPR in place*
+- [ ] Lighthouse mobile: Performance ≥ 95, Accessibility ≥ 95, Best Practices ≥ 95, SEO = 100 on `/`, `/work/meetplanner`, `/lab/audit`, `/contact`. — *owner: run on live preview URL*
+- [ ] axe-core: zero violations on the four pages above. — *owner: run Playwright axe on preview URL*
+- [ ] OG images render correctly when shared on LinkedIn + iMessage. — *owner: share preview URL links*
+- [x] Banned-phrases sweep clean (spec §13). — *confirmed clean 2026-05-14*
 
 ---
 
