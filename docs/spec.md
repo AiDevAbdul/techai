@@ -1,11 +1,11 @@
-# Abdul Wahab — Portfolio Build Spec (v1)
+# Abdul Wahab — Portfolio Build Spec (v1 + v2)
 
 > Engineering & design contract for the public site at the working folder `techai`.
-> Strategic decisions inherited from `my-suggestions.md` (positioning, IA, conversion model, content strategy). This document locks in the **design system, component contracts, page specs, and engineering plan** required to ship v1 in 3 weeks.
+> Strategic decisions inherited from `my-suggestions.md` (positioning, IA, conversion model, content strategy). This document locks in the **design system, component contracts, page specs, and engineering plan** required to ship v1 in 3 weeks — and the v2 extended scope agreed on 2026-05-14.
 >
 > Design language: **Apple HIG–inspired** (iPhone / macOS). Editorial light theme. Generous whitespace, restrained motion, hairline structure, continuous corner curves, system-style materials used sparingly.
 >
-> Owner: Abdul Wahab · Build lead: Claude (Opus 4.7) · Target launch: 3 weeks from kickoff.
+> Owner: Abdul Wahab · Build lead: Claude (Opus 4.7) · v1 target launch: 3 weeks from kickoff · v2 target: Month 2–3 post-launch.
 
 ---
 
@@ -30,13 +30,23 @@ Every page is graded on the **One-Question Test** from `my-suggestions.md §15`:
 - Plausible + Vercel Analytics wired.
 - One Urdu video greeting (30–45s) on `/about`. **Site UI is English-only in v1.**
 
-### 1.2 Out of scope for v1 (deferred to v2+)
+### 1.2 Out of scope for v1 (deferred to v2 — see §18)
+- Google Analytics (GA4). Plausible + Vercel Analytics cover v1.
+- Analytics dashboard (`/dashboard`).
+- Admin panel + CMS migration (Payload CMS + Neon Postgres). MDX in repo is sufficient until content cadence outgrows it.
 - Full Urdu UI translation. Urdu blog (`/ur/blog`) is v2.
 - Newsletter signup with double opt-in (single-field "subscribe" only in v1).
 - Lead-magnet PDFs ("30 Workflows…" etc.).
 - Testimonials carousel (drop in if 1+ real quote exists by week 3).
-- CMS (MDX in repo is sufficient until content cadence outgrows it).
-- Authentication, admin dashboard, comments, search.
+- Second Lab demo (ROI calculator or diagram generator).
+- Pagefind search on `/lab`.
+- Speaking calendar with upcoming dates.
+- Video case study walkthroughs.
+- Private/gated technical appendices on case studies.
+- Post-workshop resource portal.
+- RSS feed + automated email digest.
+- Lab Notes series format.
+- Authentication, admin dashboard, comments.
 
 ### 1.3 Hard "no" list (kills credibility — do not implement)
 Per `my-suggestions.md §13`: typing animations, particle / neural-net backgrounds, AI stock imagery, spinning 3D, code-styled section headers, "Available for hire" badges, dark + neon accents, "Let's build something amazing" CTAs.
@@ -767,7 +777,131 @@ A page ships only when **all** are true:
 
 ---
 
-## 18. Decisions Log
+---
+
+## 18. V2 — Extended Scope
+
+> V2 begins Month 2 post-launch, gated on v1 90-day metrics being on-track (≥ 4 discovery calls/month, ≥ 25 audit bot completions). If metrics are off, fix conversion before adding features.
+
+### 18.1 V2 Scope
+
+**Analytics**
+- GA4 via `@next/third-parties/google` alongside existing Plausible + Vercel Analytics. All three serve different purposes: Plausible for privacy-first content/SEO, Vercel for Web Vitals, GA4 for funnel analysis and campaign attribution.
+
+**Analytics Dashboard** (`/dashboard`, auth-gated)
+- Panels: Cal.com API → bookings + pipeline; custom events → audit bot starts/completions/email captures; Plausible + GA4 Data API → top pages + referrers; Resend API → subscriber count + open rate; content panel → Lab Note count + last published.
+- Refresh: manual pull on page load. No real-time in v2.
+
+**Admin Panel + CMS** (Payload CMS, `/admin`)
+- Payload CMS runs inside the same Next.js app (`/admin` route group).
+- Replaces MDX-in-repo for day-to-day content management.
+- Auth: Payload built-in email + password. Single admin user. No public-facing auth.
+- Media: Vercel Blob via Payload storage adapter.
+- Database: Neon Postgres (provisioned via Vercel Marketplace).
+
+**Urdu content layer**
+- `/ur/blog` and `/ur/blog/[slug]` — content layer only, not full UI translation.
+- Urdu Lab Notes authored in Payload with locale field (`en` / `ur`).
+- Stub `/ur` link already in v1 footer; expands to a landing page if data shows demand (v3).
+
+**Lead generation upgrades**
+- Lead magnet PDF: "30 Workflows AI Can Automate Today" — gated behind email, generated server-side via `@react-pdf/renderer`.
+- Newsletter double opt-in via Resend (replaces v1 single-field subscribe).
+- Video case study walkthroughs — 2–3 min Loom-style recordings embedded per case study.
+- Private/gated technical appendices — email-gated deep-dive per case study for buyers in due diligence.
+- Post-workshop resource portal — password-protected page per cohort (slides, templates, recordings).
+
+**Second Lab demo**
+- ROI calculator: "How many hours/week does your team lose to [task]?" → automation opportunity score → book audit CTA. Serves Operators; better lead qualifier than any form.
+- Alternate: workflow diagram generator (describe process in text → Mermaid/SVG diagram). Decision deferred to v2 kickoff based on v1 audit bot usage patterns.
+
+**Authority + discovery**
+- Pagefind static search for Lab Notes (zero JS overhead, builds with the site).
+- Speaking calendar on `/workshops` — upcoming dates listed; even one entry changes trust profile.
+- Testimonials carousel once 3+ real quotes exist; single pull-quote if fewer.
+- Lab Notes series format — named multi-part series for SEO clustering (e.g., "Agentic Systems from Scratch, Part 1–5").
+- RSS feed (`/lab/feed.xml`) + automated email digest via Resend when a new Lab Note publishes.
+- Dynamic OG images per Lab Note (already in v1 for `/og/[type]`; extend to per-slug generation).
+
+### 18.2 V2 Tech Stack Additions
+
+| Layer | Addition | Notes |
+|---|---|---|
+| CMS + Admin | **Payload CMS** | Next.js-native; ships inside the same app at `/admin`; Lexical rich-text editor; handles auth, media, and typed collections |
+| Database | **Neon Postgres** (Vercel Marketplace) | Payload manages schema; replaces MDX flat-files as content store |
+| Media | **Vercel Blob** | Payload storage adapter; image uploads from `/admin` |
+| Auth | Payload built-in | Email + password for `/admin` and `/dashboard`; no Clerk/NextAuth needed |
+| Analytics | **GA4** via `@next/third-parties/google` | Funnel analysis + campaign attribution; one script tag in root layout; measurement ID via `NEXT_PUBLIC_GA_MEASUREMENT_ID` |
+| Search | **Pagefind** | Static full-text search over Lab Notes; CLI runs post-build; zero runtime overhead |
+| PDF | **`@react-pdf/renderer`** | Lead magnet PDF + audit bot one-pager (already used in v1 audit flow) |
+
+### 18.3 V2 Information Architecture Additions
+
+```
+/dashboard              Internal analytics panel (Payload auth-gated)
+/admin                  Payload CMS admin UI (Payload auth-gated)
+/ur                     Urdu landing page (stub → expanded)
+/ur/blog                Urdu Lab Notes index
+/ur/blog/[slug]         Individual Urdu Lab Note
+/lab/[second-demo]      Second AI tool (ROI calculator or diagram generator — TBD)
+/lab/feed.xml           RSS feed for Lab Notes
+/workshops/[slug]       Individual workshop detail + registration (if needed)
+```
+
+### 18.4 Payload CMS — Collection Contracts
+
+| Collection | Key fields | Notes |
+|---|---|---|
+| `Project` | `title`, `slug`, `eyebrow`, `summary`, `metrics[]`, `heroDiagram`, `stack[]`, `testimonial`, `order`, `videoWalkthrough` | Replaces `content/case-studies/*.mdx` |
+| `LabNote` | `title`, `slug`, `date`, `summary`, `category`, `series`, `seriesPart`, `locale` (`en`/`ur`), `body` (Lexical) | Supports Urdu Lab Notes via locale field |
+| `Workshop` | `format`, `title`, `description`, `topics[]`, `pastEngagements[]`, `outcomes[]`, `upcomingDates[]` | Powers `/workshops` accordion + speaking calendar |
+| `Testimonial` | `quote`, `author`, `role`, `org`, `project` (relation to `Project`) | Referenced on home + case studies |
+| `LeadCapture` | `email`, `name`, `source`, `auditTranscript`, `createdAt` | Write-only from audit bot; read in dashboard |
+
+### 18.5 V2 Env Vars
+
+```
+# GA4
+NEXT_PUBLIC_GA_MEASUREMENT_ID=
+
+# Payload CMS + Neon
+DATABASE_URI=          # Neon Postgres connection string
+PAYLOAD_SECRET=        # JWT secret for Payload sessions
+
+# Vercel Blob (media)
+BLOB_READ_WRITE_TOKEN=
+```
+
+### 18.6 V2 Roadmap
+
+**Phase 1 — Analytics (Week 1 of v2)**
+- Wire GA4 via `@next/third-parties/google`; add `NEXT_PUBLIC_GA_MEASUREMENT_ID` to Vercel env.
+- Build `/dashboard` — static page, pulls from Cal.com + Plausible + Resend APIs at request time; Payload auth gate.
+- Extend §12 custom events to also fire `gtag` calls for GA4 goal tracking.
+
+**Phase 2 — Payload + Neon migration (Weeks 2–3 of v2)**
+- Add Payload CMS to existing Next.js app; configure `/admin` route group.
+- Provision Neon Postgres via Vercel Marketplace; set `DATABASE_URI`.
+- Define collections (§19.4). Wire Vercel Blob as media adapter.
+- Migrate existing MDX content into Payload admin.
+- Update page data fetches to query Payload Local API instead of `contentlayer`.
+
+**Phase 3 — Content features (Week 4 of v2)**
+- Urdu blog: add `locale` field to `LabNote`; build `/ur/blog` routes.
+- RSS feed at `/lab/feed.xml`.
+- Newsletter double opt-in via Resend; lead magnet PDF via `@react-pdf/renderer`.
+- Lab Notes series format: series title + part number in `LabNote` collection; series index UI on `/lab`.
+
+**Phase 4 — Lead gen + authority (Week 5 of v2)**
+- Second Lab demo (ROI calculator — decision at v2 kickoff).
+- Pagefind: add post-build CLI step; wire search UI on `/lab`.
+- Speaking calendar: `upcomingDates[]` on `Workshop` collection; render on `/workshops`.
+- Video walkthroughs: embed field on `Project` collection.
+- Testimonials carousel (if 3+ quotes in Payload by this point).
+
+---
+
+## 19. Decisions Log
 
 | Date | Decision | Source |
 |---|---|---|
@@ -779,7 +913,14 @@ A page ships only when **all** are true:
 | 2026-05-12 | Tech stack: Next 16 + Tailwind v4 + shadcn + Vercel AI SDK v6 + AI Gateway + Resend + Cal.com + Plausible | this spec §3 |
 | 2026-05-12 | Workflow Audit Bot at `/lab/audit` is the singular lead-magnet for v1 | `my-suggestions.md §6, §9` |
 | 2026-05-12 | Pricing: show "Audit starting from $1,500"; Build/Workshop = custom | this spec §7.4 (pending owner confirm) |
+| 2026-05-14 | V2 CMS: Payload CMS (Next.js-native, runs in same app) over Sanity or Keystatic | conversation 2026-05-14; §19.2 |
+| 2026-05-14 | V2 database: Neon Postgres via Vercel Marketplace | conversation 2026-05-14; §19.2 |
+| 2026-05-14 | V2 media: Vercel Blob via Payload storage adapter | conversation 2026-05-14; §19.2 |
+| 2026-05-14 | V2 analytics: add GA4 alongside Plausible + Vercel Analytics (all three serve distinct purposes) | conversation 2026-05-14; §19.1 |
+| 2026-05-14 | V2 second Lab demo: ROI calculator (preferred) or diagram generator — decide at v2 kickoff | conversation 2026-05-14; §19.1 |
+| 2026-05-14 | V2 search: Pagefind (static, zero runtime cost) over Algolia or custom | conversation 2026-05-14; §19.2 |
+| 2026-05-14 | V2 gated by v1 90-day metrics — fix conversion before adding features | conversation 2026-05-14; §19 |
 
 ---
 
-*End of spec. Edits land via PR with a one-line entry in §18 Decisions Log.*
+*End of spec. Edits land via PR with a one-line entry in §19 Decisions Log.*

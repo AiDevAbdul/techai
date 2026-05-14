@@ -1,7 +1,7 @@
 # Portfolio Build Plan — `techai.pk`
 
-> Execution plan for `spec.md`. Reads as a working contract for the 3-week build.
-> Owner: Abdul Wahab · Build lead: Claude (Opus 4.7) · Kickoff: 2026-05-12 · Target launch: 2026-06-02.
+> Execution plan for `spec.md`. Covers the v1 3-week build (Days 0–15) and the v2 5-week extended scope (Days 16–38).
+> Owner: Abdul Wahab · Build lead: Claude (Opus 4.7) · v1 kickoff: 2026-05-12 · v1 target launch: 2026-06-02 · v2 start: gated on v1 metrics (see §10).
 >
 > The spec is the design and engineering contract; this document is the **order of operations** — what gets built on which day, what blocks what, and which decisions must be locked before code is written.
 
@@ -267,20 +267,25 @@ Anything on the critical path that slips by 1 day moves launch. Buffer days exis
 
 ---
 
-## 7. Out of scope — do not build (enforces spec §1.2 + §1.3)
+## 7. Out of scope for v1 — do not build (enforces spec §1.2 + §1.3)
 
-- Full Urdu UI translation, `/ur/blog`, locale routing beyond a `/ur` stub link.
+The following are **v2 scope** (planned in §10) and must not be pulled into the v1 sprint:
+- GA4, analytics dashboard, admin panel, Payload CMS, Neon Postgres.
+- Full Urdu UI translation; `/ur/blog`; locale routing beyond a `/ur` stub link.
 - Lead-magnet PDF downloads beyond the audit-bot output.
-- Testimonials carousel (single quote slot only).
-- CMS, admin, auth, comments, search.
-- Newsletter double opt-in.
+- Testimonials carousel (single quote slot only in v1).
+- Newsletter double opt-in (single-field subscribe only).
+- Second Lab demo (ROI calculator).
+- Pagefind search, speaking calendar, video walkthroughs, RSS feed.
+
+The following are **permanent "no"** (kills credibility — spec §1.3):
 - Typing animations, particle/neural backgrounds, AI stock imagery, spinning 3D, code-styled section headers, "Available for hire" badges, dark+neon accents, "Let's build something amazing" CTAs.
 - `/resume`, `/skills`, `/stack`, `/portfolio` routes.
 - Marquee / carousel components.
 - View Transitions API.
 - Dark-mode diagram variants.
 
-If any of the above gets requested mid-build, push back and link the relevant spec section. The goal is a consultant page that reads like an Apple keynote chapter — not a personal site.
+If any v2 feature gets requested mid-v1 build, push back and link spec §1.2. The goal is a consultant page that reads like an Apple keynote chapter — not a personal site.
 
 ---
 
@@ -304,7 +309,7 @@ The launch goes live when **every** item below is green. No partial launches.
 
 ---
 
-## 9. Decisions made by this plan (append to spec §18 on Day 1)
+## 9. Decisions made by this plan (append to spec §19 on Day 1)
 
 | Date | Decision |
 |---|---|
@@ -316,6 +321,326 @@ The launch goes live when **every** item below is green. No partial launches.
 | 2026-05-12 | PDF rendering via `@react-pdf/renderer`; Markdown-body fallback if brittle. |
 | 2026-05-12 | Node 24 LTS adopted instead of spec-locked Node 22. Reason: Node 24 already installed on build machine; Next.js 16 supports both; no behavior gap relevant to this build. Encoded as `.nvmrc 24` + `engines.node >=22 <25`. |
 | 2026-05-12 | npm adopted instead of spec-locked pnpm. Reason: pnpm not installed on build machine and no team-coordination requirement for a content-addressable store in a solo build. Lockfile is `package-lock.json`. Revisit if collaborators join. |
+| 2026-05-14 | V2 CMS: Payload CMS 3.x (Next.js-native) over Sanity or Keystatic. Runs inside the same app at `/admin`. |
+| 2026-05-14 | V2 database: Neon Postgres via Vercel Marketplace. Payload manages schema. |
+| 2026-05-14 | V2 analytics: GA4 via `@next/third-parties/google` added alongside Plausible + Vercel Analytics. |
+| 2026-05-14 | V2 second Lab demo: ROI calculator (preferred over diagram generator). Decide definitively at v2 kickoff. |
+| 2026-05-14 | V2 search: Pagefind (static, post-build CLI) over Algolia or custom solution. |
+| 2026-05-14 | V2 gate: do not start v2 until v1 90-day metrics are on-track (≥ 4 discovery calls/month, ≥ 25 audit bot completions). |
+
+---
+
+## 10. V2 Build Plan (Days 16–38)
+
+> **Gate condition.** V2 begins only when v1 is live and 90-day metrics are on-track. If conversion is below target, fix the funnel before adding features. The exact start date is variable; Days 16–38 are relative to the v2 kickoff, not the v1 launch date.
+
+### V2 Pre-flight (before Day 16)
+
+Before starting any v2 code:
+
+1. **Pull v1 metrics** — Cal.com dashboard, Plausible, audit-bot event count. Gate check: ≥ 4 discovery calls/month, ≥ 25 audit bot completions in 90 days. If not met, stop and diagnose.
+2. **Provision Neon Postgres** — via Vercel Marketplace; copy `DATABASE_URI` to Vercel project env (production + preview).
+3. **Payload secret** — generate `PAYLOAD_SECRET` (32-char random string); add to Vercel env.
+4. **Vercel Blob** — enable in Vercel project; copy `BLOB_READ_WRITE_TOKEN` to env.
+5. **GA4 property** — create GA4 property at `techai.pk`; copy `NEXT_PUBLIC_GA_MEASUREMENT_ID` to Vercel env.
+6. **ROI calculator decision** — review audit bot usage patterns; confirm second Lab demo is ROI calculator (or diagram generator). This locks Phase 4 scope.
+
+---
+
+### Phase 1 — Analytics (Days 16–18)
+
+Goal: GA4 live, internal dashboard showing key metrics. No CMS yet — dashboard uses API calls.
+
+#### Day 16 — GA4 wiring
+- Install `@next/third-parties` if not already present.
+- Add `<GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />` to `app/layout.tsx`.
+- Extend `lib/analytics/track.ts` — each existing `plausible()` call gets a paired `gtag('event', …)` call for GA4 goal tracking.
+- Verify GA4 receiving events in GA4 Debug View (real-time panel).
+- Configure GA4 goals: `cta_book_call`, `audit_complete`, `audit_email_capture`, `cta_workshop_inquiry`.
+
+**Done when:** GA4 Debug View shows events firing for all 4 goal types on local + preview.
+
+#### Day 17 — Dashboard — Cal.com + Plausible panels
+- Create `/app/(admin)/dashboard/page.tsx` — server component; simple password gate via middleware cookie until Payload auth ships on Day 26.
+- `lib/dashboard/calcom.ts` — fetch Cal.com API: bookings this month, upcoming, total pipeline.
+- `lib/dashboard/plausible.ts` — fetch Plausible Stats API: top 5 pages, top referrers, weekly unique visitors.
+- Build dashboard UI: booking panel + traffic panel. Apple HIG card style; no chart library yet (numbers only).
+
+**Done when:** `/dashboard` renders real Cal.com + Plausible data behind password gate.
+
+#### Day 18 — Dashboard — Resend + Audit Bot + Content panels
+- `lib/dashboard/resend.ts` — fetch Resend API: subscriber count, open rate of last campaign.
+- Audit Bot panel: pull `audit_start` + `audit_complete` + `audit_email_capture` counts from Plausible Stats API (custom event filter). Derive completion rate and capture rate.
+- Content panel: count Lab Notes from MDX (Day 28 migrates this to Payload; stub for now).
+- Add simple bar indicator for each metric (CSS-only, no chart lib).
+
+**Done when:** all 5 dashboard panels render with live data; Lighthouse on `/dashboard` ≥ 95.
+
+---
+
+### Phase 2 — Payload CMS + Neon Migration (Days 19–28)
+
+Goal: Payload admin running inside the Next.js app; all MDX content migrated into Neon Postgres; MDX pipeline removed.
+
+#### Day 19 — Payload CMS bootstrap
+- Install `payload@3` + `@payloadcms/next` + `@payloadcms/db-postgres` + `@payloadcms/richtext-lexical`.
+- Add Payload plugin to `next.config.ts` via `withPayload()`.
+- Configure `payload.config.ts`: `db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URI } })`, `secret: process.env.PAYLOAD_SECRET`, `admin.user: 'users'`.
+- Define `Users` collection (email + password; single admin).
+- Wire `/admin` route group: `app/(payload)/admin/[[...segments]]/page.tsx` per Payload Next.js adapter docs.
+- First `npm run payload migrate` — creates schema in Neon.
+
+**Done when:** `/admin` loads Payload admin UI; can log in; Neon tables created.
+
+#### Day 20 — Collections — Project + LabNote
+- `collections/Project.ts` — fields from spec §18.4: `title`, `slug`, `eyebrow`, `summary`, `metrics[]` (array of `{value, label}`), `heroDiagram` (upload relation), `stack[]` (text array), `testimonial` (relation to `Testimonial`), `order` (number), `videoWalkthrough` (text — Mux video ID), `whatIdDoDifferently` (richtext).
+- `collections/LabNote.ts` — `title`, `slug`, `date`, `summary`, `category`, `series`, `seriesPart` (number), `locale` (select: `en` / `ur`), `body` (Lexical richtext), `ogImage` (upload relation).
+- Register both in `payload.config.ts`; run migration.
+
+**Done when:** can create a Project and a LabNote in Payload admin; relations resolve.
+
+#### Day 21 — Collections — Workshop + Testimonial + LeadCapture
+- `collections/Workshop.ts` — `format`, `title`, `description`, `topics[]` (richtext), `pastEngagements[]` (array: org, date, format), `outcomes[]` (text array), `upcomingDates[]` (array: date, location, format, registrationUrl).
+- `collections/Testimonial.ts` — `quote`, `author`, `role`, `org`, `project` (relation to `Project`).
+- `collections/LeadCapture.ts` — `email`, `name`, `source` (select: `audit-bot` / `lead-magnet` / `subscribe`), `auditTranscript` (textarea), `createdAt`. Access: create-only for public; read via admin.
+- Update `app/api/audit/stream/route.ts` capture step to `POST` to Payload REST API (or Local API) to create a `LeadCapture` entry on email submission.
+- Run migration.
+
+**Done when:** audit bot email capture writes a `LeadCapture` doc visible in Payload admin.
+
+#### Day 22 — Vercel Blob media adapter
+- Install `@payloadcms/storage-vercel-blob`.
+- Configure in `payload.config.ts`: `storage: vercelBlobStorage({ collections: { Project: { prefix: 'diagrams' }, LabNote: { prefix: 'og' } }, token: process.env.BLOB_READ_WRITE_TOKEN })`.
+- Test: upload a diagram SVG via Payload admin → confirm it lands in Vercel Blob + URL resolves.
+- Wire `Project.heroDiagram` upload field to the blob adapter.
+
+**Done when:** image uploaded via Payload admin is served from Vercel Blob CDN URL.
+
+#### Day 23 — Content migration — Projects (case studies)
+- In Payload admin: create 3 `Project` docs from MDX content (copy-paste then format). Upload SVG diagrams to Blob.
+- Update `app/(marketing)/work/[slug]/page.tsx` — replace contentlayer import with Payload Local API call: `payload.find({ collection: 'projects', where: { slug: { equals: params.slug } } })`.
+- Update `generateStaticParams` to pull from Payload.
+- Update `/work` index page fetch.
+- Build + verify: all 3 case studies render identically to MDX version.
+
+**Done when:** `npm run build` succeeds; all 3 case studies load from Payload; no contentlayer imports on these pages.
+
+#### Day 24 — Content migration — Lab Notes + Workshops
+- Migrate 2 seed Lab Notes from MDX to Payload (locale: `en`).
+- Update `/lab/[slug]` and `/lab` index to fetch from Payload.
+- Migrate workshop topics + past engagements to `Workshop` collection.
+- Update `/workshops` accordion and past-engagements list to fetch from Payload.
+- Build + verify.
+
+**Done when:** Lab Notes and Workshop page both render from Payload; MDX files for these can be deleted.
+
+#### Day 25 — Content migration — Services + Testimonials
+- Service tier content is largely hardcoded copy — confirm it stays in code (no CMS needed for pricing copy). Migrate only if it has variable fields.
+- Enter any available real testimonials into Payload `Testimonial` collection.
+- Wire testimonial display on home + case study pages via Payload query.
+- Build + verify.
+
+#### Day 26 — Dashboard — wire to Payload; Payload auth gate
+- Replace dashboard middleware cookie with Payload session auth: check `payload.auth()` in the dashboard route middleware.
+- Update Audit Bot dashboard panel to query `LeadCapture` collection via Payload Local API instead of Plausible custom event count.
+- Update Content panel to query Payload for Lab Note count + most recent publish date.
+
+**Done when:** `/dashboard` auth requires Payload login; audit bot metrics come from Payload.
+
+#### Day 27 — Cache invalidation + ISR revalidation
+- Add Payload `afterChange` hook to `LabNote` and `Project` collections: call `revalidateTag('lab')` / `revalidateTag('work')` via Next.js `revalidateTag()` import.
+- Wire `cacheTag('lab')` on `/lab/[slug]` and `cacheTag('work')` on `/work/[slug]` (replaces contentlayer-era manual revalidation).
+- Test: publish a new Lab Note from Payload admin → page updates within one request without a redeploy.
+
+**Done when:** content published in Payload admin appears on the live preview URL within ~2 seconds.
+
+#### Day 28 — Cleanup + Phase 2 buffer
+- Remove `contentlayer2` / `next-mdx-remote` from `package.json`.
+- Delete `content/` directory (all content now in Neon).
+- Delete `lib/content/schemas.ts` (replaced by Payload collection configs).
+- Remove old MDX-related imports from all pages.
+- Full `npm run build` — zero errors, zero warnings.
+- Lighthouse pass: all v1 target pages still ≥ 95 performance.
+
+**Phase 2 buffer:** Day 28 is half-day buffer. Most likely sinks: Payload + Next 16 adapter edge cases, Vercel Blob CORS on SVG uploads, ISR revalidation cold-start on preview.
+
+---
+
+### Phase 3 — Content Features (Days 29–33)
+
+Goal: Urdu blog live, RSS feed, double-opt-in newsletter, lead magnet PDF, Lab Notes series format.
+
+#### Day 29 — Urdu blog
+- Wire `/ur/blog` route group: `app/(marketing)/ur/blog/page.tsx` and `/ur/blog/[slug]/page.tsx`.
+- Payload query: `payload.find({ collection: 'labNotes', where: { locale: { equals: 'ur' } } })`.
+- Author 1 seed Urdu Lab Note in Payload admin.
+- Update footer `/ur` stub link → `/ur/blog` (removes the 404 stub).
+- Add `<link rel="alternate" hrefLang="ur">` for each Urdu note.
+- Metadata: title + description in Urdu; `dir="rtl"` on Urdu page body.
+
+**Done when:** `/ur/blog` renders with one Urdu note; correct `dir`, hreflang, metadata.
+
+#### Day 30 — RSS feed
+- `app/lab/feed.xml/route.ts` — generate RSS 2.0 XML from Payload Lab Notes (locale: `en`), sorted by date desc.
+- Add `<link rel="alternate" type="application/rss+xml" href="/lab/feed.xml">` in Lab Note layout `<head>`.
+- Validate feed at W3C RSS validator.
+
+**Done when:** `/lab/feed.xml` returns valid RSS 2.0; at least one reader (Reeder, NetNewsWire) can subscribe.
+
+#### Day 31 — Newsletter double opt-in
+- Create Resend audience + confirmation email template (branded, plain-text first, HTML second).
+- Replace v1 single-field subscribe form with two-step flow: submit email → pending confirmation page → Resend sends confirmation link → `/confirm-subscription?token=…` route validates token → adds to Resend audience.
+- Unsubscribe link included in every outbound email (legal requirement).
+- Update `LeadCapture` source: subscription events create a `LeadCapture` doc with `source: 'subscribe'`.
+
+**Done when:** test subscription flow end-to-end — confirmation email arrives, clicking link adds to Resend audience.
+
+#### Day 32 — Lead magnet PDF
+- Author "30 Workflows AI Can Automate Today" — 30 entries, sorted by industry (Manufacturing, Marketing, Services, SaaS, Education). Plain-language, no jargon.
+- `@react-pdf/renderer` PDF template — Apple HIG aesthetic (white bg, forest green headings, Fraunces display text, JetBrains Mono for code snippets). Max 8 pages.
+- `/api/lead-magnet/route.ts` — POST: validate email, create `LeadCapture` doc (`source: 'lead-magnet'`), send Resend email with PDF attached (rendered server-side).
+- Wire email capture form on a dedicated `/lab/30-workflows` page and as a CTA on the `/lab` index.
+
+**Done when:** form submission → PDF arrives in test inbox within 10 seconds; `LeadCapture` doc created in Payload.
+
+#### Day 33 — Lab Notes series format
+- `series` and `seriesPart` fields already in `LabNote` collection (Day 20). Activate UI:
+  - Series grouping on `/lab` index — notes with the same `series` value appear under a series header.
+  - Series navigation component in Lab Note layout: "← Part 1" / "Part 3 →" prev/next links.
+  - Series index page: `/lab/series/[slug]` — lists all parts of a named series.
+- Author first 2-part series (e.g., "Agentic Systems from Scratch, Parts 1–2").
+
+**Done when:** series navigation renders correctly; clicking prev/next moves between parts; series page lists all parts in order.
+
+---
+
+### Phase 4 — Lead Gen + Authority (Days 34–38)
+
+Goal: second Lab demo live, Pagefind search, speaking calendar, video walkthroughs, testimonials carousel.
+
+#### Day 34 — ROI Calculator (second Lab demo)
+- `app/(lab)/lab/roi-calculator/page.tsx` — client component.
+- UI: industry selector (dropdown, 8 industries) + workflow description (textarea) + hours/week input (number). CTA: "Calculate my automation potential."
+- `app/api/roi/route.ts` — Server Action (not Edge; needs more compute time): calls AI Gateway with a structured prompt; returns JSON: `{ opportunityScore: number, automationPotential: string, recommendedApproach: string, estimatedTimeSaved: string }`.
+- Output card: opportunity score (large numeral, accent color) + narrative + CTA to book audit.
+- Wire `audit_start` (on form submit) + `audit_complete` (on result render) Plausible + GA4 events.
+- Rate limit: 5 calculations / IP / hour via Vercel KV (same pattern as audit bot).
+
+**Done when:** end-to-end flow works; result renders; events fire; rate limit triggers correctly.
+
+#### Day 35 — Pagefind search
+- Add `pagefind` to `devDependencies`.
+- Update `package.json` build script: `"build": "next build && pagefind --site .next/server/app --output-path public/pagefind"`.
+- Build search UI on `/lab` index: `⌘K` / `Ctrl+K` opens a modal (shadcn `Dialog`); search input queries Pagefind; results list with title + excerpt + link.
+- Keyboard navigation: arrow keys move between results; `Enter` navigates; `Esc` closes.
+- `aria-label` on search trigger; `role="combobox"` on input; results have `role="option"`.
+
+**Done when:** Pagefind index builds as part of `npm run build`; search returns relevant Lab Notes; keyboard-navigable; axe-core clean.
+
+#### Day 36 — Speaking calendar + testimonials carousel
+- **Speaking calendar:** `upcomingDates[]` field on `Workshop` collection already defined (Day 21). Render on `/workshops`: upcoming talks sorted by date, each with location, format, and optional registration link. If no upcoming dates, section is hidden (not "Coming soon" — just absent).
+- **Testimonials carousel:** query `Testimonial` collection. If 3+ quotes: render a simple auto-advancing carousel (CSS `scroll-snap`, no JS animation library; respects `prefers-reduced-motion`). If 1–2: render as static pull-quote(s). If 0: section hidden.
+- Wire testimonials to home page "Social proof" section and to individual case study pages (filtered by `project` relation).
+
+**Done when:** speaking calendar renders if data exists; testimonials carousel advances correctly; hidden gracefully if no data.
+
+#### Day 37 — Video case study walkthroughs
+- `videoWalkthrough` field on `Project` collection already defined (Day 20). For each case study with a Mux video ID populated:
+  - Add `@mux/mux-player-react` embed below the "Outcome" section.
+  - `preload="metadata"`, `poster` from Vercel Blob, captions track (`<track kind="captions">`).
+  - Player hidden (section skipped) if `videoWalkthrough` is null — no empty video player.
+- Record 2–3 min Loom-style walkthroughs for at least one case study (MeetPlanner recommended — highest complexity to explain verbally).
+- Upload to Mux; wire ID into Payload admin.
+
+**Done when:** at least one case study shows the video player; captions load; player absent on studies without a video.
+
+#### Day 38 — V2 DoD audit + buffer
+- Lighthouse pass on all new v2 routes: `/ur/blog`, `/lab/roi-calculator`, `/dashboard`, `/lab/series/[slug]`. All ≥ 95 performance, ≥ 95 accessibility.
+- axe-core on new routes — zero violations.
+- GA4 funnel audit: landing → ROI calculator → audit bot → email capture → booking. Verify all goal events fire.
+- Verify Payload afterChange hooks revalidate ISR correctly for LabNote + Project.
+- Test Urdu RSS feed in a reader.
+- Owner smoke test: publish a new Lab Note in Payload admin → live on site without redeploy.
+- Update `README` with Payload admin login instructions, Neon connection notes, Pagefind build step.
+
+**Phase 4 buffer:** Day 38 is half-day buffer. Most likely sinks: Pagefind build step breaking Vercel CI (mitigation: run pagefind in a post-build Vercel hook, not in `next build`), ROI calculator latency under load, Mux player SSR hydration.
+
+---
+
+## 11. V2 Critical Path & Dependencies
+
+```
+Neon Postgres provisioned ──► Day 19 Payload bootstrap ──► Days 20–21 collections
+                                                         └──► Day 22 Vercel Blob
+                                                         └──► Days 23–25 content migration
+                                                         └──► Day 26 Payload auth on dashboard
+                                                         └──► Day 27 ISR revalidation
+
+GA4 measurement ID ──► Day 16 GA4 wiring ──► Day 34 ROI calculator events
+
+Payload LeadCapture collection (Day 21) ──► Day 26 dashboard audit panel
+                                        └──► Day 31 newsletter opt-in capture
+                                        └──► Day 32 lead magnet capture
+
+Payload LabNote locale field (Day 20) ──► Day 29 Urdu blog
+                                      └──► Day 33 series format
+
+npm run build + pagefind ──► Day 35 search index ──► Day 35 search UI
+```
+
+Any Payload collection definition delay on Days 20–21 cascades into every migration day. Payload bootstrap (Day 19) is the single highest-risk item — block two days of buffer if Next 16 adapter has compatibility issues.
+
+---
+
+## 12. V2 Risk Register
+
+| Risk | Likelihood | Impact | Mitigation |
+|---|---|---|---|
+| Payload 3.x + Next 16 adapter incompatibility | Medium | High (blocks entire Phase 2) | Test on a throwaway branch Day 19; if blocked >4h, open Payload GitHub issue and consider Keystatic as fallback (content stays in MDX, no DB needed) |
+| Neon Postgres cold start adds latency to Payload Local API calls | Low | Medium | Enable Neon connection pooling (pgBouncer); use Payload Local API (not REST) from server components to avoid HTTP overhead |
+| Pagefind build step incompatible with Vercel build environment | Medium | Low | Run Pagefind via Vercel `postBuild` hook in `vercel.ts` instead of inside `next build`; test on preview before Day 35 |
+| GA4 event deduplication (firing both Plausible + gtag) | Low | Low | Wrap in a single `track()` helper in `lib/analytics/track.ts`; one callsite, two destinations |
+| ROI calculator AI response latency > 5s (UX threshold) | Medium | Medium | Show streaming output (same pattern as audit bot); don't wait for full response before rendering |
+| Urdu Lab Notes require RTL layout changes | Medium | Medium | Scope RTL to `/ur` route group only; `dir="rtl"` on body; don't touch main English layout |
+| Content migration data loss (MDX → Payload) | Low | High | Keep `content/` directory in git until Phase 2 is fully deployed and verified; don't delete until Day 28 |
+| Mux video player SSR hydration mismatch | Low | Low | Wrap `@mux/mux-player-react` in `dynamic(() => import(…), { ssr: false })` |
+| V2 starts before v1 metrics are healthy | Medium | High | The gate condition in §10 is non-negotiable. If metrics are off, spend the v2 window on CRO (copy, CTA placement, audit bot flow) instead |
+
+---
+
+## 13. V2 Definition of Done
+
+V2 ships in phases — each phase has its own gate. The overall V2 DoD requires all phases complete.
+
+**Phase 1 done when:**
+- [ ] GA4 receives all 4 goal events on production.
+- [ ] `/dashboard` renders live data from Cal.com, Plausible, Resend, Payload.
+- [ ] Dashboard is auth-gated (Payload session or password — upgraded on Day 26).
+
+**Phase 2 done when:**
+- [ ] All 3 case studies, 2+ Lab Notes, and workshop content render from Payload (not MDX).
+- [ ] Payload admin UI is accessible at `/admin` with Payload login.
+- [ ] `content/` directory deleted; `contentlayer2` / `next-mdx-remote` removed from `package.json`.
+- [ ] Publishing a Lab Note in Payload admin updates the live page without a redeploy.
+- [ ] Vercel Blob serves all diagrams and OG images.
+- [ ] Lighthouse ≥ 95 performance on all v1 pages (no regression from migration).
+
+**Phase 3 done when:**
+- [ ] `/ur/blog` renders Urdu Lab Notes with correct `dir="rtl"`, hreflang, metadata.
+- [ ] `/lab/feed.xml` returns valid RSS 2.0; passes W3C validator.
+- [ ] Double opt-in newsletter flow works end-to-end (submit → confirm email → added to Resend audience).
+- [ ] Lead magnet PDF arrives in test inbox within 10 seconds of form submit.
+- [ ] Lab Notes series navigation works: prev/next links, series index page.
+
+**Phase 4 done when:**
+- [ ] ROI calculator returns a result within 8 seconds; rate limit triggers at 5/hour/IP.
+- [ ] Pagefind search returns relevant Lab Notes; keyboard-navigable; axe-core clean.
+- [ ] Speaking calendar renders upcoming dates from Payload (or section absent if no data).
+- [ ] Testimonials render (carousel if 3+, static if 1–2, hidden if 0).
+- [ ] At least one case study has a working Mux video player with captions.
+- [ ] axe-core zero violations on all new v2 routes.
+- [ ] GA4 funnel verified: landing → demo → email capture → booking goal events all fire.
+- [ ] `README` updated with Payload, Neon, Pagefind build instructions.
 
 ---
 

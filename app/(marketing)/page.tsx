@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Container from "@/components/brand/Container";
@@ -51,18 +52,21 @@ const RECENT = [
     eyebrow: "Operations · 2024",
     title: "MeetPlanner",
     outcome: "Cut scheduling friction 70% for distributed teams.",
+    heroDiagram: "/diagrams/meetplanner-architecture.svg",
   },
   {
     slug: "marketing-dash",
     eyebrow: "Marketing · 2025",
     title: "Marketing Dashboard",
     outcome: "Daily channel reports drafted in 4 minutes, not 4 hours.",
+    heroDiagram: "/diagrams/marketing-dash-architecture.svg",
   },
   {
     slug: "printing-press",
     eyebrow: "Manufacturing · 2025",
     title: "Printing Press",
     outcome: "Routed order intake → quote in under 90 seconds end-to-end.",
+    heroDiagram: "/diagrams/printing-press-architecture.svg",
   },
 ] as const;
 
@@ -189,13 +193,13 @@ export default async function Home() {
                     aria-hidden
                     className="bg-surface-secondary border-separator relative aspect-[16/10] w-full overflow-hidden border-b"
                   >
-                    {/* Day 4–5 swaps this placeholder for the real diagram thumb (spec §7.3 hero visual). */}
-                    <div className="bg-accent-soft absolute inset-0 opacity-40" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-ink-secondary text-caption">
-                        Diagram lands Day 4–5
-                      </span>
-                    </div>
+                    <Image
+                      src={tile.heroDiagram}
+                      alt={`${tile.title} — workflow architecture`}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="object-contain p-6"
+                    />
                   </div>
                   <div className="flex flex-1 flex-col p-6">
                     <p className="text-ink-secondary text-eyebrow tracking-[var(--track-eyebrow)] uppercase">

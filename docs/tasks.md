@@ -24,9 +24,9 @@ Provision Vercel project, Resend (techai.pk DKIM/SPF/DMARC), AI Gateway + Anthro
 
 ## #2 — Day 1 — Project bootstrap & design tokens
 
-**Status:** complete (2026-05-12) — pending Vercel preview Lighthouse run
+**Status:** complete (2026-05-12, vercel.ts added 2026-05-14) — pending Vercel preview Lighthouse run
 
-`create-next-app` (App Router, TS strict, Tailwind v4); enable `noUncheckedIndexedAccess` + `exactOptionalPropertyTypes`; `vercel.ts` + `vercel link`; install shadcn, lucide, clsx, tailwind-merge, zod, `next-mdx-remote` (fallback), `contentlayer2` (primary); `styles/tokens.css` from spec §5; Fraunces + JetBrains Mono via `next/font`; no-flash theme bootstrap; footer theme toggle (system/light/dark) via `useReducer`; shadcn primitives (Button/Card/Input/Textarea/Label/Dialog/Sheet/Sonner/Tabs/Accordion/Tooltip).
+`create-next-app` (App Router, TS strict, Tailwind v4); enable `noUncheckedIndexedAccess` + `exactOptionalPropertyTypes`; `vercel.ts` created (2026-05-14) with `@vercel/config` — framework declaration + security headers (X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy); install shadcn, lucide, clsx, tailwind-merge, zod, `next-mdx-remote` (fallback), `contentlayer2` (primary); `styles/tokens.css` from spec §5; Fraunces + JetBrains Mono via `next/font`; no-flash theme bootstrap; footer theme toggle (system/light/dark) via `useReducer`; shadcn primitives (Button/Card/Input/Textarea/Label/Dialog/Sheet/Sonner/Tabs/Accordion/Tooltip).
 
 **DoD:** preview deploys, blank shell Lighthouse Perf ≥ 95.
 
@@ -44,9 +44,9 @@ Navbar with sticky + material blur on scroll > 12px + mobile sheet; Footer 3-col
 
 ## #4 — Day 3 — Home page
 
-**Status:** complete (2026-05-13)
+**Status:** complete (2026-05-13, diagram tiles wired 2026-05-14)
 
-Hero with locked spec §7.1 copy (Fraunces H1, `--t-display-xl` ≥1280px); 3-card Who I work with row (Operators/Teams/Communities) anchoring to `/services`; Recent Systems 3-tile row (placeholder until Day 4–5); How I work 3-step list; Lab Notes latest-3 (empty state OK); Closing CTA; metadata + OG stub; Plausible + Vercel Analytics wired.
+Hero with locked spec §7.1 copy (Fraunces H1, `--t-display-xl` ≥1280px); 3-card Who I work with row (Operators/Teams/Communities) anchoring to `/services`; Recent Systems 3-tile row — SVG architecture diagrams from `/public/diagrams/` wired via `<Image>` (placeholder copy "Diagram lands Day 4-5" removed 2026-05-14); How I work 3-step list; Lab Notes latest-3 (real notes wired); Closing CTA; metadata + OG stub; Plausible + Vercel Analytics wired.
 
 **DoD:** real copy on mobile + desktop, LCP ≤ 1.8s preview, One-Question Test passes.
 
@@ -148,4 +148,6 @@ Final copy pass against banned-phrases list (spec §13); zero `console.log` in c
 
 **Status:** owner-side · code is launch-ready, gates run on a live preview URL.
 
-Verify every DoD item green before go-live: all 9 pages at `techai.pk`; audit-bot e2e; Cal.com booking; contact form arrival + auto-reply; Plausible 10 events; sitemap accepted by GSC; no third-party "powered by"; README documents env/build/content/deploy; Lab Note publish-via-push works; Lighthouse mobile Perf ≥ 95, A11y ≥ 95, BP ≥ 95, SEO = 100 on `/`, `/work/meetplanner`, `/lab/audit`, `/contact`; axe-core zero violations on same four; OG renders correctly on LinkedIn + iMessage; banned-phrases sweep clean.
+Code-side DoD items completed 2026-05-14: README written (env/build/content authoring/deploy documented); banned-phrases sweep clean (no violations); no `console.log` in client code; `vercel.ts` created with security headers.
+
+Remaining (owner-side on live URL): all 9 pages at `techai.pk`; audit-bot e2e (PDF in test inbox); Cal.com booking confirmed; contact form arrival + auto-reply; Plausible 10 events; sitemap accepted by GSC; no third-party "powered by"; Lab Note publish-via-push verified; Lighthouse mobile Perf ≥ 95, A11y ≥ 95, BP ≥ 95, SEO = 100 on `/`, `/work/meetplanner`, `/lab/audit`, `/contact`; axe-core zero violations on same four; OG renders correctly on LinkedIn + iMessage.
