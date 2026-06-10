@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllCaseStudies } from "@/lib/content/case-studies";
 import { getAllLabNotes } from "@/lib/content/lab-notes";
+import { getAllSessions } from "@/lib/content/sessions";
 
 /*
  * Sitemap — Next 16 native (spec §11).
@@ -22,6 +23,7 @@ const STATIC_PATHS: Array<{
   { path: "/work", changeFrequency: "monthly", priority: 0.9 },
   { path: "/services", changeFrequency: "monthly", priority: 0.9 },
   { path: "/workshops", changeFrequency: "monthly", priority: 0.85 },
+  { path: "/sessions", changeFrequency: "weekly", priority: 0.82 },
   { path: "/lab", changeFrequency: "weekly", priority: 0.8 },
   { path: "/lab/audit", changeFrequency: "monthly", priority: 0.85 },
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
@@ -30,9 +32,10 @@ const STATIC_PATHS: Array<{
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const [studies, notes] = await Promise.all([
+  const [studies, notes, sessions] = await Promise.all([
     getAllCaseStudies(),
     getAllLabNotes(),
+    getAllSessions(),
   ]);
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.map((entry) => ({
@@ -56,5 +59,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticEntries, ...caseStudyEntries, ...labNoteEntries];
+  const sessionEntries: MetadataRoute.Sitemap = sessions
+    .filter((s) => s.frontmatter.type === "recorded")
+    .map((s) => ({
+      url: `${SITE_URL}/sessions/${s.frontmatter.slug}`,
+      lastModified: new Date(s.frontmatter.date),
+      changeFrequency: "monthly",
+      priority: 0.75,
+    }));
+
+  return [
+    ...staticEntries,
+    ...caseStudyEntries,
+    ...labNoteEntries,
+    ...sessionEntries,
+  ];
 }

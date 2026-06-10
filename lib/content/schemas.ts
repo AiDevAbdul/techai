@@ -114,3 +114,28 @@ export type PastEngagement = z.infer<typeof pastEngagementSchema>;
 export const pastEngagementsFileSchema = z.object({
   engagements: z.array(pastEngagementSchema).min(3),
 });
+
+/*
+ * Sessions — spec extension (post-v1). Two types: `recorded` (has a youtubeId)
+ * and `upcoming` (no video yet). Three topics match the three audience tracks.
+ *
+ * `resources` is optional so sessions can ship without attachments.
+ */
+export const sessionResourceSchema = z.object({
+  label: z.string().min(1),
+  href: z.string().min(1),
+});
+export type SessionResource = z.infer<typeof sessionResourceSchema>;
+
+export const sessionFrontmatterSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/, "slug must be lowercase kebab-case"),
+  title: z.string().min(1),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD"),
+  topic: z.enum(["Agentic AI", "Python Programming", "Social Media Marketing"]),
+  type: z.enum(["recorded", "upcoming"]),
+  summary: z.string().min(1),
+  duration: z.number().int().min(1).optional(),
+  youtubeId: z.string().optional(),
+  resources: z.array(sessionResourceSchema).optional(),
+});
+export type SessionFrontmatter = z.infer<typeof sessionFrontmatterSchema>;
