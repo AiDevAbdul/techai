@@ -337,6 +337,7 @@ The launch goes live when **every** item below is green. No partial launches.
 | 2026-05-14 | V2 second Lab demo: ROI calculator (preferred over diagram generator). Decide definitively at v2 kickoff. |
 | 2026-05-14 | V2 search: Pagefind (static, post-build CLI) over Algolia or custom solution. |
 | 2026-05-14 | V2 gate: do not start v2 until v1 90-day metrics are on-track (≥ 4 discovery calls/month, ≥ 25 audit bot completions). |
+| 2026-06-13 | Added LMS (`/learn`) as a post-v1 feature (Task #18). Three pages: catalog, course overview, lesson player. Backed by YouTube Data API v3 with hourly cache — new videos uploaded to either playlist appear on-site automatically within 1 hour. Static fallback arrays ensure build never fails without `YOUTUBE_API_KEY`. Lesson URL slug = YouTube video ID for permanent stability. `YOUTUBE_API_KEY` added to Vercel production env. |
 
 ---
 

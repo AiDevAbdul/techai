@@ -19,6 +19,7 @@ Provision Vercel project, Resend (techai.pk DKIM/SPF/DMARC), AI Gateway + Anthro
 - `AI_GATEWAY_API_KEY` (Vercel AI Gateway)
 - `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
 - `HCAPTCHA_SECRET` (optional — gates workshop form captcha verification)
+- `YOUTUBE_API_KEY` (YouTube Data API v3 — optional; site falls back to static lesson data when absent)
 
 ---
 
@@ -141,6 +142,32 @@ Three-paragraph editorial body; speaking/workshop 16:9 photo (`<Image>` `priorit
 **Status:** owner-side · launch operation; runs against the live Vercel project.
 
 Final copy pass against banned-phrases list (spec §13); zero `console.log` in client + no console errors/warnings; DNS cutover to production, verify `www → apex` 308; swap Resend production keys; submit sitemap to GSC; test Cal.com booking end-to-end; test contact form arrival + auto-reply; test audit-bot full flow (5 questions → hypothesis → email capture → PDF in test inbox); verify Plausible receiving all 10 events; owner sanity-test publishing a Lab Note by MDX push (no manual rebuild).
+
+---
+
+## #18 — Post-v1 — LMS (`/learn`) with YouTube auto-sync
+
+**Status:** complete (2026-06-13)
+
+Free course catalog at `/learn` backed by YouTube Data API v3. Three pages: catalog (`/learn`), course overview (`/learn/[course]`), lesson player (`/learn/[course]/[lesson]`). Lessons are fetched live from YouTube playlists hourly using `"use cache"` + `cacheLife("hours")` + `cacheTag("yt-{playlistId}")`. When a new video is added to a playlist, it appears on the site within 1 hour — no code change or redeploy needed.
+
+**Courses shipped:**
+- Social Media Management (`PLYyJgoGsSKNsHeIMRps-qVuWRy0oms_Pc`) — 9 lessons, status: available
+- AI Driven Development with Claude Code (`PLYyJgoGsSKNul4KN8mPiaYgGXQQIGDr_E`) — 12 lessons, status: in-progress (new lessons added weekly)
+- Agentic AI — status: coming-soon (no playlistId yet; card shown as locked)
+
+**Implementation:**
+- `lib/content/youtube.ts` — server-only; fetches `playlistItems.list` (with pagination) + `videos.list` (batch 50) from YouTube Data API v3. Parses ISO 8601 duration (`PT1H21M33S` → `"1 hr 21 min"`). Fetches video description for display and SEO.
+- `lib/content/courses.ts` — course metadata, static fallback lesson arrays (`SMM_LESSONS`, `AI_DEV_LESSONS`). `withLessons()` uses live data if API returns results; falls back to static if empty. Build never fails without the API key.
+- `app/(marketing)/learn/page.tsx` — async catalog page; calls `getAllCourses()`.
+- `app/(marketing)/learn/[course]/page.tsx` — course overview with lesson list and "Start Course" CTA.
+- `app/(marketing)/learn/[course]/[lesson]/page.tsx` — lesson player with YouTubePlayer embed, lesson description ("About this lesson"), prev/next navigation, end-of-course CTA, `VideoObject` JSON-LD, sidebar with `LessonListClient`.
+- `components/learn/LessonListClient.tsx` — client component; localStorage progress tracking (`learn-seen-{courseSlug}`); `PlayCircle`/`CheckCircle2`/`Circle` icons; progress bar.
+- `components/brand/Navbar.tsx` — "Learn" link added between Sessions and Lab.
+- URL slug = YouTube video ID (permanent, stable even if title or position changes).
+- `YOUTUBE_API_KEY` added to Vercel production env; falls back to static data if key absent.
+
+**DoD:** build passes with static fallback data; lesson pages generate statically at build; live data loads at runtime via hourly cache; descriptions show in "About this lesson" section and SEO metadata.
 
 ---
 
