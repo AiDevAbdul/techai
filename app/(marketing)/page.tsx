@@ -92,36 +92,65 @@ export default async function Home() {
       {/* ── 1. Hero ───────────────────────────────────────────────────── */}
       <section className="relative">
         <Container className="pt-18 pb-22 lg:pt-26 lg:pb-30">
-          <p className="text-accent text-eyebrow font-medium tracking-[var(--track-eyebrow)] uppercase">
-            AI workflows · Training · Talks
-          </p>
-          <h1 className="serif text-ink mt-6 max-w-[18ch] text-[clamp(2.75rem,8vw,5.5rem)] leading-[1.05] tracking-[var(--track-display)]">
-            I help businesses turn repetitive work into AI workflows.
-          </h1>
-          <p className="text-ink-secondary text-callout mt-8 max-w-[52ch]">
-            Workflow automation, agentic systems, and team training — for
-            companies that want AI in real operations, not slideshows.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
-            <Link
-              href="/contact"
-              className="bg-accent text-primary-foreground hover:bg-accent-hover plausible-event-name=cta_book_call inline-flex items-center justify-center rounded-pill px-5 py-2.5 text-callout font-medium transition-colors duration-[var(--dur-fast)]"
-            >
-              Book a 30-min call
-            </Link>
-            <Link
-              href="/services"
-              className="text-ink hover:text-accent text-callout inline-flex items-center gap-1.5 font-medium transition-colors duration-[var(--dur-fast)]"
-            >
-              See how I work
-              <ArrowRight size={16} strokeWidth={1.75} aria-hidden />
-            </Link>
+          <div className="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-20">
+
+            {/* Profile card — first in DOM = top on mobile, right on desktop via order-last */}
+            <div className="flex shrink-0 flex-col items-center gap-5 lg:order-last">
+              <div className="relative size-52 overflow-hidden rounded-[2rem] ring-1 ring-black/[0.07] sm:size-60 lg:size-72 xl:size-80">
+                <Image
+                  src="/ProfileImage.png"
+                  alt="Abdul Wahab"
+                  fill
+                  priority
+                  sizes="(min-width: 1280px) 20rem, (min-width: 1024px) 18rem, 15rem"
+                  className="object-cover object-top"
+                />
+              </div>
+              <div className="text-center">
+                <p className="text-ink text-headline font-medium tracking-[var(--track-title)]">
+                  Abdul Wahab
+                </p>
+                <p className="text-ink-secondary text-footnote mt-1">
+                  AI Consultant · Educator · Speaker
+                </p>
+              </div>
+            </div>
+
+            {/* Text */}
+            <div className="flex-1">
+              <p className="text-accent text-eyebrow font-medium tracking-[var(--track-eyebrow)] uppercase">
+                AI workflows · Training · Talks
+              </p>
+              <h1 className="serif text-ink mt-6 max-w-[18ch] text-[clamp(2.75rem,8vw,5.5rem)] leading-[1.05] tracking-[var(--track-display)]">
+                I help businesses turn repetitive work into AI workflows.
+              </h1>
+              <p className="text-ink-secondary text-callout mt-8 max-w-[52ch]">
+                Workflow automation, agentic systems, and team training — for
+                companies that want AI in real operations, not slideshows.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <Link
+                  href="/contact"
+                  className="bg-accent text-primary-foreground hover:bg-accent-hover plausible-event-name=cta_book_call inline-flex items-center justify-center rounded-pill px-5 py-2.5 text-callout font-medium transition-colors duration-[var(--dur-fast)]"
+                >
+                  Book a 30-min call
+                </Link>
+                <Link
+                  href="/services"
+                  className="text-ink hover:text-accent text-callout inline-flex items-center gap-1.5 font-medium transition-colors duration-[var(--dur-fast)]"
+                >
+                  See how I work
+                  <ArrowRight size={16} strokeWidth={1.75} aria-hidden />
+                </Link>
+              </div>
+              <p className="text-ink-secondary text-footnote mt-14 flex items-center gap-3">
+                <span aria-hidden className="bg-separator-opaque h-px w-8" />
+                Trusted by teams in manufacturing, marketing, SaaS
+                <span aria-hidden className="bg-separator-opaque h-px w-8" />
+              </p>
+            </div>
+
           </div>
-          <p className="text-ink-secondary text-footnote mt-14 flex items-center gap-3">
-            <span aria-hidden className="bg-separator-opaque h-px w-8" />
-            Trusted by teams in manufacturing, marketing, SaaS
-            <span aria-hidden className="bg-separator-opaque h-px w-8" />
-          </p>
         </Container>
       </section>
 

@@ -18,15 +18,15 @@ const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
 /*
  * Fraunces — hero H1 + case-study titles only (spec §5.3).
- * Weights 400/500/600 only (Day 14 perf budget); italics for editorial pull-quotes.
+ * Weights 400/500 only (600 and italic dropped for mobile LCP).
  * Variable font; optical sizing engaged via `font-variation-settings: "opsz" auto`
  * in app/globals.css via the `.serif` utility.
  */
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+  weight: ["400", "500"],
+  style: ["normal"],
   display: "swap",
   preload: true,
 });
@@ -40,7 +40,7 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
-  preload: true,
+  preload: false,
 });
 
 /*
