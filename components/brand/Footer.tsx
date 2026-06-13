@@ -1,6 +1,13 @@
 import Link from "next/link";
 import Container from "./Container";
 import ThemeToggle from "./ThemeToggle";
+import {
+  YouTubeIcon,
+  FacebookIcon,
+  InstagramIcon,
+  LinkedInIcon,
+  TikTokIcon,
+} from "./SocialIcons";
 
 // Build-time constant — Cache Components forbids `new Date()` in server
 // trees without a cache directive. Captured at module load (build time);
@@ -32,10 +39,11 @@ const SITE_MAP = [
 ] as const;
 
 const SOCIAL = [
-  { href: "https://www.youtube.com/@AiDevAbdul", label: "YouTube" },
-  { href: "https://www.facebook.com/@AiDevAbdul", label: "Facebook" },
-  { href: "https://www.instagram.com/@AiDevAbdul", label: "Instagram" },
-  { href: "https://www.linkedin.com/in/@AiDevAbdul", label: "LinkedIn" },
+  { href: "https://www.youtube.com/@AiDevAbdul", label: "YouTube", Icon: YouTubeIcon },
+  { href: "https://www.facebook.com/AiDevAbdul", label: "Facebook", Icon: FacebookIcon },
+  { href: "https://www.instagram.com/AiDevAbdul", label: "Instagram", Icon: InstagramIcon },
+  { href: "https://www.linkedin.com/in/abdulwahab/", label: "LinkedIn", Icon: LinkedInIcon },
+  { href: "https://www.tiktok.com/@AiDevAbdul", label: "TikTok", Icon: TikTokIcon },
 ] as const;
 
 export default function Footer() {
@@ -96,16 +104,17 @@ export default function Footer() {
                 +92 348 984 8136
               </a>
             </div>
-            <ul className="mt-4 flex gap-4" role="list">
+            <ul className="mt-4 flex gap-3" role="list">
               {SOCIAL.map((s) => (
                 <li key={s.href}>
                   <a
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-ink-secondary hover:text-ink text-footnote transition-colors duration-[var(--dur-fast)]"
+                    aria-label={s.label}
+                    className="text-ink-secondary hover:text-ink transition-colors duration-[var(--dur-fast)] block"
                   >
-                    {s.label}
+                    <s.Icon size={18} />
                   </a>
                 </li>
               ))}
