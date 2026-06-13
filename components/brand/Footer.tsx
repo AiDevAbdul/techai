@@ -33,9 +33,10 @@ const SITE_MAP = [
 ] as const;
 
 const SOCIAL = [
-  { href: "https://www.linkedin.com/in/abdulwahab/", label: "LinkedIn" },
-  { href: "https://github.com/abdulwahab", label: "GitHub" },
-  { href: "https://x.com/abdulwahab", label: "X" },
+  { href: "https://www.youtube.com/@AiDevAbdul", label: "YouTube" },
+  { href: "https://www.facebook.com/@AiDevAbdul", label: "Facebook" },
+  { href: "https://www.instagram.com/@AiDevAbdul", label: "Instagram" },
+  { href: "https://www.linkedin.com/in/@AiDevAbdul", label: "LinkedIn" },
 ] as const;
 
 export default function Footer() {
@@ -80,12 +81,22 @@ export default function Footer() {
             <p className="text-ink-secondary text-eyebrow tracking-[0.06em] uppercase mb-4">
               Contact
             </p>
-            <a
-              href="mailto:abdul@duckercreative.com"
-              className="text-ink-secondary hover:text-ink text-footnote block transition-colors duration-[var(--dur-fast)]"
-            >
-              abdul@duckercreative.com
-            </a>
+            <div className="space-y-2">
+              <a
+                href="mailto:aidevabdul@gmail.com"
+                className="text-ink-secondary hover:text-ink text-footnote block transition-colors duration-[var(--dur-fast)]"
+              >
+                aidevabdul@gmail.com
+              </a>
+              <a
+                href="https://wa.me/923489848136"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ink-secondary hover:text-ink text-footnote block transition-colors duration-[var(--dur-fast)]"
+              >
+                +92 348 984 8136
+              </a>
+            </div>
             <ul className="mt-4 flex gap-4" role="list">
               {SOCIAL.map((s) => (
                 <li key={s.href}>

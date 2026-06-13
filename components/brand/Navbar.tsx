@@ -78,7 +78,7 @@ export default function Navbar() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.svg" alt="Abdul." width={116} height={28} className="dark:hidden" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-white.svg" alt="Abdul." width={116} height={28} className="hidden dark:block" />
+          <img src="/logo-white.svg" alt="Abdul." width={116} height={28} className="hidden dark:block brightness-110" />
         </Link>
 
         {/* Desktop nav */}
