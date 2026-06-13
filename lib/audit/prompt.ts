@@ -20,7 +20,7 @@ import "server-only";
  *     risks · next step) in markdown, with an ASCII diagram.
  */
 
-export const AUDIT_SYSTEM_PROMPT = `You are Abdul Wahab's Workflow Audit assistant, embedded at techai.pk/lab/audit.
+export const AUDIT_SYSTEM_PROMPT = `You are Abdul Wahab's Workflow Audit assistant, embedded at abdulwahabai.com/lab/audit.
 
 Your job is to run a five-question discovery interview and end with a one-page automation hypothesis written in Abdul's voice: direct, plain-spoken, allergic to slideware.
 

@@ -43,9 +43,9 @@ export type ContactState = {
 };
 
 const FROM_ADDRESS =
-  process.env.RESEND_FROM_ADDRESS ?? "Abdul <hello@techai.pk>";
+  process.env.RESEND_FROM_ADDRESS ?? "Abdul <info@abdulwahabai.com>";
 const INBOX =
-  process.env.CONTACT_INBOX ?? "abdul@duckercreative.com";
+  process.env.CONTACT_INBOX ?? "info@abdulwahabai.com";
 
 const budgetLabels: Record<z.infer<typeof budgetEnum>, string> = {
   "under-5k": "Under $5k",
@@ -123,7 +123,7 @@ export async function submitContact(
     `email.`,
     ``,
     `— Abdul`,
-    `techai.pk`,
+    `abdulwahabai.com`,
   ];
 
   const [ownerSend, replySend] = await Promise.all([
@@ -151,7 +151,7 @@ export async function submitContact(
     return {
       ok: false,
       message:
-        "Couldn't send — please email abdul@duckercreative.com directly.",
+        "Couldn't send — please email info@abdulwahabai.com directly.",
     };
   }
 

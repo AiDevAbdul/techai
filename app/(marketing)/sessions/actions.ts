@@ -24,11 +24,11 @@ export type SessionNotifyState = {
 };
 
 const FROM_ADDRESS =
-  process.env.RESEND_FROM_ADDRESS ?? "Sessions <sessions@techai.pk>";
+  process.env.RESEND_FROM_ADDRESS ?? "Abdul <info@abdulwahabai.com>";
 const INBOX =
   process.env.SESSIONS_INBOX ??
   process.env.CONTACT_INBOX ??
-  "abdul@duckercreative.com";
+  "info@abdulwahabai.com";
 
 export async function subscribeToSessions(
   _prev: SessionNotifyState,

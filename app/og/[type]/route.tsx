@@ -27,11 +27,11 @@ const SURFACE = "#FBFBFD";
 const SURFACE_LINE = "#E5E5E7";
 
 const TYPE_DEFAULTS: Record<string, { eyebrow: string }> = {
-  default: { eyebrow: "Abdul Wahab · techai.pk" },
-  "case-study": { eyebrow: "Case study · techai.pk" },
-  "lab-note": { eyebrow: "Lab note · techai.pk" },
-  audit: { eyebrow: "Workflow audit bot · techai.pk" },
-  service: { eyebrow: "Service · techai.pk" },
+  default: { eyebrow: "Abdul Wahab · abdulwahabai.com" },
+  "case-study": { eyebrow: "Case study · abdulwahabai.com" },
+  "lab-note": { eyebrow: "Lab note · abdulwahabai.com" },
+  audit: { eyebrow: "Workflow audit bot · abdulwahabai.com" },
+  service: { eyebrow: "Service · abdulwahabai.com" },
 };
 
 async function loadFraunces(): Promise<ArrayBuffer | null> {
@@ -164,7 +164,7 @@ export async function GET(
             Abdul Wahab
           </div>
           <div style={{ display: "flex" }}>
-            {meta ?? "techai.pk"}
+            {meta ?? "abdulwahabai.com"}
           </div>
         </div>
       </div>

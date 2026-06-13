@@ -24,7 +24,7 @@ import {
  * Upcoming sessions carry no video schema.
  */
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://techai.pk";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://abdulwahabai.com";
 
 export async function generateStaticParams() {
   const slugs = await getSessionSlugs();

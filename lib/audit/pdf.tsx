@@ -13,7 +13,7 @@ import { AUDIT_QUESTIONS } from "./types";
  * Audit hypothesis PDF — react-pdf server-rendered (spec §7.8).
  *
  * Layout: A4, one column, max two pages. Header strip (Abdul Wahab ·
- * techai.pk), then the streamed hypothesis (rendered as plain paragraphs —
+ * abdulwahabai.com), then the streamed hypothesis (rendered as plain paragraphs —
  * we don't parse markdown for v1; the model already structures it with
  * blank lines and ## headings, which we render as bold dividers).
  *
@@ -215,12 +215,12 @@ export function AuditPdf({
   return (
     <Document
       title={`Workflow Audit — ${recipient.name}`}
-      author="Abdul Wahab — techai.pk"
-      creator="techai.pk"
+      author="Abdul Wahab — abdulwahabai.com"
+      creator="abdulwahabai.com"
     >
       <Page size="A4" style={styles.page}>
         <View style={styles.brandRow}>
-          <Text style={styles.brand}>Abdul Wahab — techai.pk</Text>
+          <Text style={styles.brand}>Abdul Wahab — abdulwahabai.com</Text>
           <Text style={styles.brandMeta}>{dateLabel}</Text>
         </View>
 
@@ -229,7 +229,7 @@ export function AuditPdf({
           A one-page hypothesis for {recipient.name.split(" ")[0] ?? recipient.name}
         </Text>
         <Text style={styles.meta}>
-          Based on the five-question discovery interview at techai.pk/lab/audit.
+          Based on the five-question discovery interview at abdulwahabai.com/lab/audit.
         </Text>
 
         {/* The model's hypothesis output */}
@@ -264,7 +264,7 @@ export function AuditPdf({
         })}
 
         <Text style={styles.footer} fixed>
-          <Text>techai.pk · abdul@duckercreative.com</Text>
+          <Text>abdulwahabai.com · info@abdulwahabai.com</Text>
         </Text>
       </Page>
 
@@ -284,7 +284,7 @@ export function AuditPdf({
           call, a fuller audit, or a workshop quote. — Abdul
         </Text>
         <Text style={styles.footer} fixed>
-          <Text>techai.pk · abdul@duckercreative.com</Text>
+          <Text>abdulwahabai.com · info@abdulwahabai.com</Text>
         </Text>
       </Page>
     </Document>

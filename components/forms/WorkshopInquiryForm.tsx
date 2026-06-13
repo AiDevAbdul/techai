@@ -361,7 +361,7 @@ export default function WorkshopInquiryForm() {
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-1">
         <SubmitButton />
         <p className="text-ink-secondary text-caption max-w-[42ch]">
-          Replies arrive from <span className="text-ink">abdul@duckercreative.com</span>{" "}
+          Replies arrive from <span className="text-ink">info@abdulwahabai.com</span>{" "}
           within two business days.
         </p>
       </div>

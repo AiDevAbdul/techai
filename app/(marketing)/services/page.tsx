@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
 };
 
-const SITE_URL = "https://techai.pk";
+const SITE_URL = "https://abdulwahabai.com";
 
 function serviceJsonLd(service: Service) {
   const { frontmatter, body } = service;

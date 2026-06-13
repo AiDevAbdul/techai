@@ -28,11 +28,11 @@ const captureSchema = z.object({
 });
 
 const FROM_ADDRESS =
-  process.env.RESEND_FROM_ADDRESS ?? "Abdul <hello@techai.pk>";
+  process.env.RESEND_FROM_ADDRESS ?? "Abdul <info@abdulwahabai.com>";
 const OWNER_INBOX =
   process.env.AUDIT_INBOX ??
   process.env.CONTACT_INBOX ??
-  "abdul@duckercreative.com";
+  "info@abdulwahabai.com";
 
 async function sendWithAttachment(input: {
   to: string;
@@ -127,15 +127,15 @@ export async function POST(req: Request): Promise<Response> {
   const visitorText = [
     `Hi ${firstName},`,
     ``,
-    `Attached is the one-page workflow audit you ran on techai.pk.`,
+    `Attached is the one-page workflow audit you ran on abdulwahabai.com.`,
     `It's the bot's hypothesis, not the last word — reply to this email`,
     `if any of it looks off, or if you want to go deeper on the next step.`,
     ``,
     `If a 30-minute call is the right next move, book one here:`,
-    `https://techai.pk/contact`,
+    `https://abdulwahabai.com/contact`,
     ``,
     `— Abdul`,
-    `techai.pk`,
+    `abdulwahabai.com`,
   ].join("\n");
 
   const ownerText = [
@@ -159,7 +159,7 @@ export async function POST(req: Request): Promise<Response> {
     sendWithAttachment({
       to: email,
       from: FROM_ADDRESS,
-      subject: "Your workflow audit — techai.pk",
+      subject: "Your workflow audit — abdulwahabai.com",
       text: visitorText,
       attachmentBase64: pdfBase64,
       attachmentName: pdfName,
@@ -181,7 +181,7 @@ export async function POST(req: Request): Promise<Response> {
         ok: false,
         reason: "send_failed",
         message:
-          "Couldn't send the PDF — please email abdul@duckercreative.com for a copy.",
+          "Couldn't send the PDF — please email info@abdulwahabai.com for a copy.",
       },
       { status: 502 },
     );

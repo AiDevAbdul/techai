@@ -32,7 +32,7 @@ import {
  * single-field subscribe form. Article JSON-LD per note.
  */
 
-const SITE_URL = "https://techai.pk";
+const SITE_URL = "https://abdulwahabai.com";
 
 export async function generateStaticParams() {
   const notes = await getAllLabNotes();
@@ -131,7 +131,7 @@ export default async function LabNotePage({
     },
     publisher: {
       "@type": "Organization",
-      name: "techai.pk",
+      name: "abdulwahabai.com",
       url: SITE_URL,
     },
     mainEntityOfPage: {

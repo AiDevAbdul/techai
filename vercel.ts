@@ -5,7 +5,7 @@ import type { VercelConfig } from "@vercel/config/v1";
  * Vercel project configuration (typed alternative to vercel.json).
  * Spec §3 + plan §1.4.
  *
- * www → apex redirect (www.techai.pk → techai.pk, 308) is configured at the
+ * www → apex redirect (www.abdulwahabai.com → abdulwahabai.com, 308) is configured at the
  * Vercel domain settings level, not as a code routing rule.
  * This file handles framework declaration and HTTP security headers.
  */

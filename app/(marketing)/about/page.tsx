@@ -19,8 +19,8 @@ import UrduGreeting from "@/components/brand/UrduGreeting";
  * Urdu surface. Full Urdu UI is v2.
  */
 
-const SITE_URL = "https://techai.pk";
-const OWNER_EMAIL = "abdul@duckercreative.com";
+const SITE_URL = "https://abdulwahabai.com";
+const OWNER_EMAIL = "info@abdulwahabai.com";
 
 export const metadata: Metadata = {
   title: "About — engineer who teaches",
@@ -44,7 +44,7 @@ const personJsonLd = {
   jobTitle: "AI Workflow Consultant & Technical Educator",
   worksFor: {
     "@type": "Organization",
-    name: "techai.pk",
+    name: "abdulwahabai.com",
     url: SITE_URL,
   },
   email: `mailto:${OWNER_EMAIL}`,

@@ -13,7 +13,7 @@ import ContactForm from "@/components/forms/ContactForm";
  * (actions.ts) that fans out to Resend (owner inbox + sender auto-reply).
  */
 
-const OWNER_EMAIL = "abdul@duckercreative.com";
+const OWNER_EMAIL = "info@abdulwahabai.com";
 
 export const metadata: Metadata = {
   title: "Contact — book a call or send a note",

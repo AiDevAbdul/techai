@@ -60,7 +60,7 @@ const themeBootstrap = `(function () {
   }
 })();`;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://techai.pk";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://abdulwahabai.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

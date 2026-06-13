@@ -575,7 +575,7 @@ function CaptureForm({
           | null;
         setError(
           data?.message ??
-            "Couldn't send the PDF — please email abdul@duckercreative.com.",
+            "Couldn't send the PDF — please email info@abdulwahabai.com.",
         );
         setSubmitting(false);
         return;
@@ -585,7 +585,7 @@ function CaptureForm({
       onDone();
     } catch (err) {
       console.error(err);
-      setError("Network error — please try again or write to abdul@duckercreative.com.");
+      setError("Network error — please try again or write to info@abdulwahabai.com.");
       setSubmitting(false);
     }
   }

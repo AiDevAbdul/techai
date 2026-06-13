@@ -47,11 +47,11 @@ export type WorkshopInquiryState = {
 };
 
 const FROM_ADDRESS =
-  process.env.RESEND_FROM_ADDRESS ?? "Workshops <workshops@techai.pk>";
+  process.env.RESEND_FROM_ADDRESS ?? "Abdul <info@abdulwahabai.com>";
 const INBOX =
   process.env.WORKSHOP_INBOX ??
   process.env.CONTACT_INBOX ??
-  "abdul@duckercreative.com";
+  "info@abdulwahabai.com";
 
 const formatLabels: Record<z.infer<typeof formatEnum>, string> = {
   "executive-briefing": "Executive briefing",
@@ -158,7 +158,7 @@ export async function submitWorkshopInquiry(
     `team composition, business goals — just reply to this email.`,
     ``,
     `— Abdul`,
-    `techai.pk`,
+    `abdulwahabai.com`,
   ];
 
   // Fire both sends in parallel. We don't fail the user-facing submit if one
@@ -189,7 +189,7 @@ export async function submitWorkshopInquiry(
     return {
       ok: false,
       message:
-        "Couldn't send the inquiry — please email abdul@duckercreative.com directly.",
+        "Couldn't send the inquiry — please email info@abdulwahabai.com directly.",
     };
   }
 

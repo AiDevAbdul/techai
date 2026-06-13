@@ -12,7 +12,7 @@ import { getAllSessions } from "@/lib/content/sessions";
  * (robots.ts also disallows them).
  */
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://techai.pk";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://abdulwahabai.com";
 
 const STATIC_PATHS: Array<{
   path: string;
