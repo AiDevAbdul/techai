@@ -26,22 +26,22 @@
   --separator:       color-mix(in oklab, #000 12%, transparent);
   --separator-opaque:#D2D2D7;
 
-  /* Brand accent — forest green */
-  --accent:          #15573D;
-  --accent-hover:    #114730;
-  --accent-pressed:  #0D3923;
-  --accent-soft:     #E8F0EA;
-  --accent-ring:     color-mix(in oklab, #15573D 35%, transparent);
+  /* Brand accent — Node.js green */
+  --accent:          #3A8A2E;
+  --accent-hover:    #2C6B22;
+  --accent-pressed:  #1F5018;
+  --accent-soft:     #E9F5E5;
+  --accent-ring:     color-mix(in oklab, #3A8A2E 35%, transparent);
   /*
    * Foreground when *on* an accent background (filled buttons).
-   * Light theme: dark accent → white text passes AAA at 7:1+.
-   * Dark theme overrides this below with a dark ink, since the dark accent
-   * is mint and white text on mint fails WCAG AA (~1.6:1).
+   * Light theme: dark accent → white text passes AA at ~5:1.
+   * Dark theme overrides this below with dark ink, since the dark accent
+   * is bright lime and white text on it fails WCAG AA.
    */
   --accent-on:       #FFFFFF;
 
   /* Semantic */
-  --success:         #15573D;
+  --success:         #3A8A2E;
   --warning:         #B25E09;
   --danger:          #B3261E;
 
@@ -129,12 +129,12 @@
   --separator:       color-mix(in oklab, #FFF 14%, transparent);
   --separator-opaque:#2C2C2E;
 
-  --accent:          #6EC79A;
-  --accent-hover:    #84D2AB;
-  --accent-pressed:  #5BB789;
-  --accent-soft:     #1B2D24;
-  --accent-ring:     color-mix(in oklab, #6EC79A 35%, transparent);
-  --accent-on:       #0B0B0D; /* dark ink on mint — ~10:1, passes AAA */
+  --accent:          #74D452;
+  --accent-hover:    #86DB67;
+  --accent-pressed:  #60C43B;
+  --accent-soft:     #192B13;
+  --accent-ring:     color-mix(in oklab, #74D452 35%, transparent);
+  --accent-on:       #0D1A0A; /* dark ink on bright lime — passes AAA */
 
   --code-bg:         #1A1A1D;
   --code-ink:        #F5F5F7;
@@ -165,12 +165,12 @@
     --separator:       color-mix(in oklab, #FFF 14%, transparent);
     --separator-opaque:#2C2C2E;
 
-    --accent:          #6EC79A;
-    --accent-hover:    #84D2AB;
-    --accent-pressed:  #5BB789;
-    --accent-soft:     #1B2D24;
-    --accent-ring:     color-mix(in oklab, #6EC79A 35%, transparent);
-    --accent-on:       #0B0B0D;
+    --accent:          #74D452;
+    --accent-hover:    #86DB67;
+    --accent-pressed:  #60C43B;
+    --accent-soft:     #192B13;
+    --accent-ring:     color-mix(in oklab, #74D452 35%, transparent);
+    --accent-on:       #0D1A0A;
 
     --code-bg:         #1A1A1D;
     --code-ink:        #F5F5F7;

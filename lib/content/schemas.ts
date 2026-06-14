@@ -33,6 +33,7 @@ export const caseStudyFrontmatterSchema = z.object({
   heroDiagram: z.string().regex(/^\/diagrams\/.+\.svg$/, "heroDiagram must point at /diagrams/*.svg"),
   stack: z.array(z.string().min(1)).min(1),
   testimonial: testimonialSchema.optional(),
+  githubUrl: z.string().url().optional(),
   order: z.number().int().min(1),
 });
 

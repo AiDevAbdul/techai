@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Container from "@/components/brand/Container";
 import PlausiblePageEvent from "@/components/brand/PlausiblePageEvent";
@@ -155,16 +155,31 @@ export default async function CaseStudyPage({
       {/* ── 10a. Stack pill row ───────────────────────────────────────── */}
       <Container as="section" className="pb-12">
         <div className="border-separator border-t pt-10">
-          <p className="text-ink-secondary text-eyebrow tracking-[var(--track-eyebrow)] uppercase">
-            Stack
-          </p>
-          <ul className="mt-4 flex flex-wrap gap-2" role="list">
-            {frontmatter.stack.map((tech) => (
-              <li key={tech}>
-                <Pill variant="code">{tech}</Pill>
-              </li>
-            ))}
-          </ul>
+          <div className="flex flex-wrap items-start justify-between gap-6">
+            <div className="flex-1">
+              <p className="text-ink-secondary text-eyebrow tracking-[var(--track-eyebrow)] uppercase">
+                Stack
+              </p>
+              <ul className="mt-4 flex flex-wrap gap-2" role="list">
+                {frontmatter.stack.map((tech) => (
+                  <li key={tech}>
+                    <Pill variant="code">{tech}</Pill>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {frontmatter.githubUrl && (
+              <a
+                href={frontmatter.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ink-secondary hover:text-accent border-separator hover:border-accent inline-flex shrink-0 items-center gap-2 rounded-pill border px-4 py-2 text-footnote font-medium transition-colors duration-[var(--dur-fast)]"
+              >
+                <ExternalLink size={14} strokeWidth={1.75} aria-hidden />
+                View on GitHub
+              </a>
+            )}
+          </div>
         </div>
       </Container>
 

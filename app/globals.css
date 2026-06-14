@@ -26,7 +26,7 @@
  *
  *  2. shadcn-compat aliases (`--color-primary`, `--color-background`,
  *     `--color-border`, …) → re-route shadcn's expected token names at OUR
- *     spec colors so primitives inherit forest-green + Apple HIG instead of
+ *     spec colors so primitives inherit Node.js green + Apple HIG instead of
  *     the default neutral oklch palette. Don't touch the names — shadcn
  *     primitives reference them literally.
  */
