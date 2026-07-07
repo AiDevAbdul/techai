@@ -33,7 +33,7 @@ import {
  */
 
 export const metadata: Metadata = {
-  title: "Workshops & Speaking — Hands-on AI training for teams",
+  title: "Workshops & Speaking — AI training for teams",
   description:
     "Three formats, one playbook: executive briefings, team workshops, and hands-on bootcamps that ship working AI workflows by end of day.",
   alternates: { canonical: "/workshops" },

@@ -15,7 +15,9 @@ import { getAllLabNotes } from "@/lib/content/lab-notes";
  */
 
 export const metadata: Metadata = {
-  title: "AI workflow systems for operators, teams, and communities",
+  title: {
+    absolute: "AI workflow systems for operators, teams, and communities",
+  },
   description:
     "Workflow automation, agentic systems, and team training — for companies that want AI in real operations, not slideshows.",
   alternates: { canonical: "/" },

@@ -47,11 +47,11 @@ export type WorkshopInquiryState = {
 };
 
 const FROM_ADDRESS =
-  process.env.RESEND_FROM_ADDRESS ?? "Abdul <info@abdulwahabai.com>";
+  process.env.RESEND_FROM_ADDRESS ?? "Abdul <aidevabdul@gmail.com>";
 const INBOX =
   process.env.WORKSHOP_INBOX ??
   process.env.CONTACT_INBOX ??
-  "info@abdulwahabai.com";
+  "aidevabdul@gmail.com";
 
 const formatLabels: Record<z.infer<typeof formatEnum>, string> = {
   "executive-briefing": "Executive briefing",
@@ -189,7 +189,7 @@ export async function submitWorkshopInquiry(
     return {
       ok: false,
       message:
-        "Couldn't send the inquiry — please email info@abdulwahabai.com directly.",
+        "Couldn't send the inquiry — please email aidevabdul@gmail.com directly.",
     };
   }
 

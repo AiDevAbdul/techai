@@ -62,6 +62,25 @@ const themeBootstrap = `(function () {
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://abdulwahabai.com";
 
+/*
+ * Sitewide Organization JSON-LD — gives every page a baseline entity graph
+ * for AI/search crawlers. /about and /services carry more specific
+ * Person/Service schema on top of this.
+ */
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Abdul Wahab",
+  url: siteUrl,
+  founder: {
+    "@type": "Person",
+    name: "Abdul Wahab",
+  },
+  email: "mailto:aidevabdul@gmail.com",
+  description:
+    "Audits, builds, and workshops that turn AI from a buzzword into routed, observable workflows.",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -110,6 +129,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-surface text-ink flex min-h-full flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
         {plausibleDomain && (
           <script

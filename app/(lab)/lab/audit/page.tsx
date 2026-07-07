@@ -11,7 +11,7 @@ import AuditBot from "@/components/audit/AuditBot";
  */
 
 export const metadata: Metadata = {
-  title: "Workflow Audit — five questions, one hypothesis",
+  title: "Workflow Audit — five questions, one answer",
   description:
     "Answer five questions and get a one-page automation hypothesis: the bottleneck, an architecture sketch, a recommended stack, one suggested next step.",
   alternates: { canonical: "/lab/audit" },

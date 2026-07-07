@@ -264,7 +264,7 @@ export function AuditPdf({
         })}
 
         <Text style={styles.footer} fixed>
-          <Text>abdulwahabai.com · info@abdulwahabai.com</Text>
+          <Text>abdulwahabai.com · aidevabdul@gmail.com</Text>
         </Text>
       </Page>
 
@@ -284,7 +284,7 @@ export function AuditPdf({
           call, a fuller audit, or a workshop quote. — Abdul
         </Text>
         <Text style={styles.footer} fixed>
-          <Text>abdulwahabai.com · info@abdulwahabai.com</Text>
+          <Text>abdulwahabai.com · aidevabdul@gmail.com</Text>
         </Text>
       </Page>
     </Document>

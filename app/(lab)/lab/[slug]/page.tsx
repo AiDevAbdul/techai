@@ -141,6 +141,20 @@ export default async function LabNotePage({
     articleSection: frontmatter.category,
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Lab", item: `${SITE_URL}/lab` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: frontmatter.title,
+        item: `${SITE_URL}/lab/${slug}`,
+      },
+    ],
+  };
+
   return (
     <main id="main" className="flex flex-1 flex-col">
       <PlausiblePageEvent event={`lab_note_view_${frontmatter.slug}`} />
@@ -296,6 +310,10 @@ export default async function LabNotePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
     </main>
   );

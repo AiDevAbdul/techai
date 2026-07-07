@@ -78,8 +78,27 @@ export default async function CaseStudyPage({
 
   const { frontmatter, body } = study;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://abdulwahabai.com";
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Work", item: `${siteUrl}/work` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: frontmatter.title,
+        item: `${siteUrl}/work/${frontmatter.slug}`,
+      },
+    ],
+  };
+
   return (
     <main id="main" className="flex flex-1 flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <PlausiblePageEvent event={`case_study_view_${frontmatter.slug}`} />
       {/* ── 1. Hero strip ─────────────────────────────────────────────── */}
       <Container as="section" className="pt-18 pb-12 lg:pt-26 lg:pb-16">
