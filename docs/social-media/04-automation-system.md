@@ -795,7 +795,7 @@ Node 8: Anthropic API — generate insights
   - Prompt: "Analyze this week's social media data for techai.pk and give Abdul 3 actionable observations in plain English. Data: [paste aggregated stats]. Rules: be direct, tell him what worked and what didn't, recommend one change for next week. Max 120 words."
 
 Node 9: Resend Email
-  - To: abdul@duckercreative.com
+  - To: aidevabdul@gmail.com
   - Subject: techai.pk Weekly Recap — [Date]
   - Body: HTML email with stats table + AI insight section
 ```

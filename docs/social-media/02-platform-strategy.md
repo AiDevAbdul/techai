@@ -98,7 +98,7 @@ Facebook remains Pakistan's highest-reach social network. With 45–50 million a
 
 **Contact & Location**
 - [ ] Website: `https://techai.pk`
-- [ ] Email: `abdul@duckercreative.com` (until hello@techai.pk is live)
+- [ ] Email: `aidevabdul@gmail.com` (until hello@techai.pk is live)
 - [ ] WhatsApp Business number linked
 - [ ] City: your city, Pakistan
 - [ ] Service areas: Pakistan + Remote/International

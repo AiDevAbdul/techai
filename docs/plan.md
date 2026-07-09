@@ -16,7 +16,7 @@ The spec was drafted against `abdulwahab.dev`. The confirmed launch domain is **
 | Primary domain | `techai.pk` |
 | `NEXT_PUBLIC_SITE_URL` | `https://techai.pk` |
 | Resend `from` | `Abdul Wahab <hello@techai.pk>` |
-| `CONTACT_INBOX` | `hello@techai.pk` (alias → `abdul@duckercreative.com` until inbox is provisioned) |
+| `CONTACT_INBOX` | `hello@techai.pk` (alias → `aidevabdul@gmail.com` until inbox is provisioned) |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | `techai.pk` |
 | Person schema `url` | `https://techai.pk` |
 | OG / canonical base | `https://techai.pk` |
