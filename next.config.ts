@@ -41,6 +41,11 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
+  experimental: {
+    // Tailwind's atomic CSS stays small per-page, so inlining it into
+    // <head> removes the render-blocking stylesheet request (LCP).
+    inlineCss: true,
+  },
   async headers() {
     return [
       {
