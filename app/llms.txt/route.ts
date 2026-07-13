@@ -14,17 +14,17 @@ Operators, Teams, and Communities.
 
 ## Pages
 
-- Home: ${SITE_URL}/
-- Work (case studies): ${SITE_URL}/work
-- Services (audit, build, workshop, speaking): ${SITE_URL}/services
-- Workshops & speaking: ${SITE_URL}/workshops
-- Lab (field notes): ${SITE_URL}/lab
-- About: ${SITE_URL}/about
-- Contact: ${SITE_URL}/contact
+- [Home](${SITE_URL}/)
+- [Work (case studies)](${SITE_URL}/work)
+- [Services (audit, build, workshop, speaking)](${SITE_URL}/services)
+- [Workshops & speaking](${SITE_URL}/workshops)
+- [Lab (field notes)](${SITE_URL}/lab)
+- [About](${SITE_URL}/about)
+- [Contact](${SITE_URL}/contact)
 
 ## Contact
 
-Email: aidevabdul@gmail.com
+Email: [aidevabdul@gmail.com](mailto:aidevabdul@gmail.com)
 `;
 }
 
