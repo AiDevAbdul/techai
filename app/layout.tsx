@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Fraunces, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -15,6 +16,13 @@ import { Toaster } from "@/components/ui/sonner";
  * plausible.io script; switch to a CNAME later if we proxy through Vercel.
  */
 const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
+
+/*
+ * Google Analytics (gtag.js) — only emitted when NEXT_PUBLIC_GA_MEASUREMENT_ID
+ * is set. Runs alongside Plausible; Plausible stays the primary
+ * privacy-friendly analytics source, GA is supplemental.
+ */
+const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 /*
  * Fraunces — hero H1 + case-study titles only (spec §5.3).
@@ -140,6 +148,20 @@ export default function RootLayout({
             data-domain={plausibleDomain}
             src="https://plausible.io/js/script.tagged-events.outbound-links.js"
           />
+        )}
+        {gaMeasurementId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaMeasurementId}');`}
+            </Script>
+          </>
         )}
         <SkipLink />
         <TooltipProvider delay={350}>
