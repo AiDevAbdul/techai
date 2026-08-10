@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllCaseStudies } from "@/lib/content/case-studies";
 import { getAllLabNotes } from "@/lib/content/lab-notes";
 import { getAllSessions } from "@/lib/content/sessions";
+import { getAllCourses } from "@/lib/content/courses";
 
 /*
  * Sitemap — Next 16 native (spec §11).
@@ -26,16 +27,18 @@ const STATIC_PATHS: Array<{
   { path: "/sessions", changeFrequency: "weekly", priority: 0.82 },
   { path: "/lab", changeFrequency: "weekly", priority: 0.8 },
   { path: "/lab/audit", changeFrequency: "monthly", priority: 0.85 },
+  { path: "/learn", changeFrequency: "weekly", priority: 0.85 },
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
   { path: "/contact", changeFrequency: "yearly", priority: 0.6 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const [studies, notes, sessions] = await Promise.all([
+  const [studies, notes, sessions, courses] = await Promise.all([
     getAllCaseStudies(),
     getAllLabNotes(),
     getAllSessions(),
+    getAllCourses(),
   ]);
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.map((entry) => ({
@@ -68,10 +71,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.75,
     }));
 
+  const liveCourses = courses.filter((c) => c.status !== "coming-soon");
+
+  const courseEntries: MetadataRoute.Sitemap = liveCourses.map((c) => ({
+    url: `${SITE_URL}/learn/${c.slug}`,
+    lastModified: now,
+    changeFrequency: c.status === "in-progress" ? "weekly" : "monthly",
+    priority: 0.78,
+  }));
+
+  const lessonEntries: MetadataRoute.Sitemap = liveCourses.flatMap((c) =>
+    c.lessons.map((l) => ({
+      url: `${SITE_URL}/learn/${c.slug}/${l.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.65,
+    })),
+  );
+
   return [
     ...staticEntries,
     ...caseStudyEntries,
     ...labNoteEntries,
     ...sessionEntries,
+    ...courseEntries,
+    ...lessonEntries,
   ];
 }
