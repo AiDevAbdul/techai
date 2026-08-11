@@ -87,12 +87,12 @@ Per `my-suggestions.md §13`: typing animations, particle / neural-net backgroun
 | Booking | **Cal.com inline embed** | `/contact` page; brand-color override = forest green. |
 | Analytics | **Vercel Analytics** + **Plausible** | Plausible for content/SEO; Vercel for Web Vitals. |
 | AI demo | **Vercel AI SDK v6** + **AI Gateway** | Streaming on Edge; model: `anthropic/claude-sonnet-4-6`. |
-| Email infra | Resend domain on `abdulwahab.dev` | SPF/DKIM/DMARC verified before launch. |
+| Email infra | Resend domain on `abdulwahabai.com` | SPF/DKIM/DMARC verified before launch. |
 | Deploy | Vercel | Single project; preview branches enabled. |
 | Config | **`vercel.ts`** (not `vercel.json`) | Per current Vercel guidance. |
 | Package manager | **npm** | Lockfile (`package-lock.json`) committed. (Was pnpm in v1 draft; deviated 2026-05-12 — see plan §9.) |
 | Node version | Pinned via `.nvmrc` + `engines.node` |
-| Domain | `abdulwahab.dev` (preferred) or `.ai` if available | Resolution: redirect www → apex. |
+| Domain | `abdulwahabai.com` (preferred) or `.ai` if available | Resolution: redirect www → apex. |
 
 **Diagram pipeline.** Workflow diagrams authored in **Excalidraw** (`.excalidraw` source committed) → exported to **SVG** placed in `/public/diagrams/`. No raster diagrams in v1. Dark-mode variants are post-v1.
 
@@ -677,12 +677,12 @@ vercel.ts
 ### 13.3 Env vars
 ```
 # Build
-NEXT_PUBLIC_SITE_URL=https://abdulwahab.dev
+NEXT_PUBLIC_SITE_URL=https://abdulwahabai.com
 
 # Email
 RESEND_API_KEY=
-CONTACT_INBOX=hello@abdulwahab.dev
-CONTACT_FROM=Abdul Wahab <hello@abdulwahab.dev>
+CONTACT_INBOX=hello@abdulwahabai.com
+CONTACT_FROM=Abdul Wahab <hello@abdulwahabai.com>
 
 # AI
 AI_GATEWAY_API_KEY=
@@ -693,7 +693,7 @@ KV_REST_API_URL=
 KV_REST_API_TOKEN=
 
 # Analytics
-NEXT_PUBLIC_PLAUSIBLE_DOMAIN=abdulwahab.dev
+NEXT_PUBLIC_PLAUSIBLE_DOMAIN=abdulwahabai.com
 
 # Booking
 NEXT_PUBLIC_CAL_USERNAME=abdulwahab
@@ -737,7 +737,7 @@ Buffer days are baked into each week (assume 6 working days/week available, not 
 
 ## 15. Open Questions (blockers if unresolved by Day 1)
 
-1. **Domain** — confirm `abdulwahab.dev` (recommended) vs `.ai` vs `.com`. Drives DNS, Resend setup, and email aliases.
+1. **Domain** — confirm `abdulwahabai.com` (recommended) vs `.ai` vs `.com`. Drives DNS, Resend setup, and email aliases.
 2. **Pricing visibility** — show "Audit — starting from $1,500" on `/services` or gate it behind a discovery call? Default: **show** (filters tire-kickers, per `my-suggestions.md`). Confirm.
 3. **Testimonials at launch** — even one operator quote from MeetPlanner or Printing Press changes the trust profile materially. Available?
 4. **First public engagement listed on `/workshops` at launch** — even a small community talk. Available?
@@ -765,7 +765,7 @@ A page ships only when **all** are true:
 
 ## 17. Definition of Done (project-level v1)
 
-- [ ] All 9 pages live at `abdulwahab.dev`.
+- [ ] All 9 pages live at `abdulwahabai.com`.
 - [ ] Workflow Audit Bot working end-to-end, PDF arriving in test inbox.
 - [ ] Cal.com booking confirmed in test booking.
 - [ ] Contact form arriving in `CONTACT_INBOX` with auto-reply to sender.

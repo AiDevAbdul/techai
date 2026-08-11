@@ -9,19 +9,19 @@
 
 ## 0. Domain & identity reconciliation
 
-The spec was drafted against `abdulwahab.dev`. The confirmed launch domain is **`techai.pk`**. Apply these substitutions everywhere in code, copy, env, and schema before launch:
+The spec was drafted against `abdulwahab.dev`, briefly reconciled to `techai.pk`, and the domain is now finally locked to **`abdulwahabai.com`**. Apply these substitutions everywhere in code, copy, env, and schema before launch:
 
 | Spec field | Locked value |
 |---|---|
-| Primary domain | `techai.pk` |
-| `NEXT_PUBLIC_SITE_URL` | `https://techai.pk` |
-| Resend `from` | `Abdul Wahab <hello@techai.pk>` |
-| `CONTACT_INBOX` | `hello@techai.pk` (alias → `aidevabdul@gmail.com` until inbox is provisioned) |
-| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | `techai.pk` |
-| Person schema `url` | `https://techai.pk` |
-| OG / canonical base | `https://techai.pk` |
-| Email infra | Resend domain on `techai.pk`; SPF / DKIM / DMARC verified before launch |
-| Redirect rule | `www.techai.pk` → `techai.pk` (308) |
+| Primary domain | `abdulwahabai.com` |
+| `NEXT_PUBLIC_SITE_URL` | `https://abdulwahabai.com` |
+| Resend `from` | `Abdul Wahab <hello@abdulwahabai.com>` |
+| `CONTACT_INBOX` | `hello@abdulwahabai.com` (alias → `aidevabdul@gmail.com` until inbox is provisioned) |
+| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | `abdulwahabai.com` |
+| Person schema `url` | `https://abdulwahabai.com` |
+| OG / canonical base | `https://abdulwahabai.com` |
+| Email infra | Resend domain on `abdulwahabai.com`; SPF / DKIM / DMARC verified before launch |
+| Redirect rule | `www.abdulwahabai.com` → `abdulwahabai.com` (308) |
 
 Resolves spec §15 Q1. Update spec §3 + §13.3 + §18 with a one-line decisions-log entry on Day 1.
 
@@ -330,6 +330,7 @@ The launch goes live when **every** item below is green. No partial launches.
 | 2026-05-12 | Testimonial section ships only if real quote available by Day 10; no fabrication. |
 | 2026-05-12 | PDF rendering via `@react-pdf/renderer`; Markdown-body fallback if brittle. |
 | 2026-05-12 | Node 24 LTS adopted instead of spec-locked Node 22. Reason: Node 24 already installed on build machine; Next.js 16 supports both; no behavior gap relevant to this build. Encoded as `.nvmrc 24` + `engines.node >=22 <25`. |
+| 2026-07-16 | Launch domain re-locked to `abdulwahabai.com` (superseding the 2026-05-12 `techai.pk` decision above). All references in spec.md/plan.md updated. |
 | 2026-05-12 | npm adopted instead of spec-locked pnpm. Reason: pnpm not installed on build machine and no team-coordination requirement for a content-addressable store in a solo build. Lockfile is `package-lock.json`. Revisit if collaborators join. |
 | 2026-05-14 | V2 CMS: Payload CMS 3.x (Next.js-native) over Sanity or Keystatic. Runs inside the same app at `/admin`. |
 | 2026-05-14 | V2 database: Neon Postgres via Vercel Marketplace. Payload manages schema. |
