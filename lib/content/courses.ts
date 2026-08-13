@@ -52,7 +52,7 @@ const AI_DEV_LESSONS: Lesson[] = [
 const COURSE_META: CourseMeta[] = [
   {
     slug: "social-media-management",
-    title: "Social Media Management",
+    title: "Free Social Media Management Course with AI",
     subtitle: "For beginners and small business owners",
     description:
       "Learn social media management from scratch — content creation with AI, Facebook page setup, scheduling, audits, reporting, and landing your first clients.",
@@ -69,7 +69,7 @@ const COURSE_META: CourseMeta[] = [
       "Master Claude Code from first setup to advanced agentic techniques — CLAUDE.md, persistent memory, skills, MCP subagents, Gemini CLI, and prompt engineering. New lessons added every week.",
     audience: "Teams",
     playlistId: "PLYyJgoGsSKNul4KN8mPiaYgGXQQIGDr_E",
-    status: "in-progress",
+    status: "available",
     staticLessons: AI_DEV_LESSONS,
   },
   {
