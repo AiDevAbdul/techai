@@ -26,7 +26,8 @@ import { cn } from "@/lib/utils";
  * The transition is opacity/background only — position stays `sticky top-0`
  * the whole time. No layout shift.
  *
- * Mobile: shadcn Sheet menu, full-height side drawer. Desktop: inline nav.
+ * Mobile and tablet (<1024px): shadcn Sheet menu, full-height side drawer.
+ * Desktop (lg and up): inline nav.
  *
  * "Book a call" is the only accent surface in the navbar — every page in v1
  * funnels here (spec §0 North Star).
@@ -35,6 +36,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/work", label: "Work" },
   { href: "/services", label: "Services" },
+  { href: "/mentorship", label: "Mentorship" },
   { href: "/workshops", label: "Workshops" },
   { href: "/sessions", label: "Sessions" },
   { href: "/learn", label: "Learn" },
@@ -75,15 +77,19 @@ export default function Navbar() {
       )}
     >
       <Container as="nav" aria-label="Primary" className="flex items-center justify-between py-3">
-        <Link href="/" aria-label="Abdul Wahab — Home">
+        <Link href="/" aria-label="Abdul Wahab — Home" className="shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.svg" alt="Abdul." width={116} height={28} className="dark:hidden" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-white.svg" alt="Abdul." width={116} height={28} className="hidden dark:block brightness-110" />
         </Link>
 
-        {/* Desktop nav */}
-        <ul className="hidden items-center gap-8 md:flex" role="list">
+        {/* Desktop nav — eight items since /mentorship was added. The inline
+         * row switches on at lg, not md: at 768–1023px eight labels plus the
+         * CTA exactly fill the bar, colliding with the logo and wrapping the
+         * button onto two lines. Those widths get the Sheet menu instead. The
+         * gap still tightens at lg and relaxes at xl. */}
+        <ul className="hidden items-center gap-5 lg:flex lg:gap-6 xl:gap-8" role="list">
           {NAV_ITEMS.map((item) => {
             const active = isActive(pathname, item.href);
             return (
@@ -106,7 +112,7 @@ export default function Navbar() {
         {/* Desktop CTA */}
         <Link
           href="/contact"
-          className="bg-accent text-primary-foreground hover:bg-accent-hover plausible-event-name=cta_book_call hidden rounded-pill px-4 py-2 text-footnote font-medium transition-colors duration-[var(--dur-fast)] md:inline-flex"
+          className="bg-accent text-primary-foreground hover:bg-accent-hover plausible-event-name=cta_book_call hidden shrink-0 rounded-pill px-4 py-2 text-footnote font-medium whitespace-nowrap transition-colors duration-[var(--dur-fast)] lg:inline-flex"
         >
           Book a call
         </Link>
@@ -115,7 +121,7 @@ export default function Navbar() {
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
             aria-label="Open menu"
-            className="text-ink hover:bg-surface-secondary inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors md:hidden"
+            className="text-ink hover:bg-surface-secondary inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors lg:hidden"
           >
             <Menu size={20} strokeWidth={1.75} aria-hidden />
           </SheetTrigger>

@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import TopicField from "@/components/forms/TopicField";
 import {
   submitContact,
   type ContactState,
@@ -13,9 +14,10 @@ import {
 /*
  * /contact form (spec §7.10).
  *
- * Fields: name, email, org (optional), message, budget (optional dropdown),
- * honeypot. useActionState pattern mirrors the workshops form so visual
- * conventions and error semantics stay identical.
+ * Fields: name, email, org (optional), topic (optional, preselected from
+ * `?topic=`), message, budget (optional dropdown), honeypot. useActionState
+ * pattern mirrors the workshops form so visual conventions and error semantics
+ * stay identical.
  *
  * Success edge: sonner toast + Plausible `cta_contact_submit` event + form
  * reset. Field-level errors render inline below the relevant input.
@@ -82,6 +84,7 @@ export default function ContactForm() {
   const idName = useId();
   const idEmail = useId();
   const idOrg = useId();
+  const idTopic = useId();
   const idBudget = useId();
   const idMessage = useId();
   const idStatus = useId();
@@ -159,6 +162,20 @@ export default function ContactForm() {
           />
           <FieldError id={`${idEmail}-error`} message={errors.email} />
         </div>
+      </div>
+
+      <div>
+        <label
+          htmlFor={idTopic}
+          className="text-ink text-footnote font-medium block mb-2"
+        >
+          What&rsquo;s this about?{" "}
+          <span className="text-ink-tertiary font-normal">(optional)</span>
+        </label>
+        <TopicField
+          id={idTopic}
+          className={cn(fieldBase, "appearance-none pr-9")}
+        />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-[1.4fr_1fr]">

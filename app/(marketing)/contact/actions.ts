@@ -2,13 +2,20 @@
 
 import { z } from "zod";
 import { sendEmail } from "@/lib/email/send";
+import {
+  CONTACT_TOPIC_VALUES,
+  contactTopicLabel,
+  isContactTopic,
+  type ContactTopic,
+} from "@/lib/contact-topics";
 
 /*
  * /contact form — Server Action (spec §7.10).
  *
- * Fields: name, email, org, message, budget (optional dropdown), honeypot.
- * Send transactional to CONTACT_INBOX + auto-reply to sender. Returns the
- * narrow {ok, message, errors} shape the client renders inline.
+ * Fields: name, email, org, topic (optional, seeded from `?topic=`), message,
+ * budget (optional dropdown), honeypot. Send transactional to CONTACT_INBOX +
+ * auto-reply to sender. Returns the narrow {ok, message, errors} shape the
+ * client renders inline.
  *
  * Shares `sendEmail` with the workshops form so credential and verification
  * paths are identical. Graceful in dev: missing RESEND_API_KEY logs the
@@ -34,6 +41,10 @@ const contactSchema = z.object({
     .min(20, "A sentence or two helps — please add a little more")
     .max(2000),
   budget: budgetEnum.optional(),
+  /* Never user-authored free text — it arrives from a `?topic=` link or the
+   * select, and anything unrecognised is dropped before we get here. Keeping
+   * it a closed enum means nothing arbitrary can reach the email subject. */
+  topic: z.enum(CONTACT_TOPIC_VALUES as unknown as [ContactTopic, ...ContactTopic[]]).optional(),
 });
 
 export type ContactState = {
@@ -69,6 +80,9 @@ export async function submitContact(
   }
 
   const budgetRaw = formData.get("budget");
+  /* Unrecognised topic → treated as absent, not as a validation error. A stale
+   * or hand-edited link must never block a real enquiry. */
+  const topicRaw = formData.get("topic");
   const raw = {
     name: formData.get("name"),
     email: formData.get("email"),
@@ -77,6 +91,7 @@ export async function submitContact(
     ...(typeof budgetRaw === "string" && budgetRaw.length > 0
       ? { budget: budgetRaw }
       : {}),
+    ...(isContactTopic(topicRaw) ? { topic: topicRaw } : {}),
   };
 
   const parsed = contactSchema.safeParse(raw);
@@ -97,6 +112,7 @@ export async function submitContact(
 
   const data = parsed.data;
   const budgetLabel = data.budget ? budgetLabels[data.budget] : "—";
+  const topicLabel = data.topic ? contactTopicLabel(data.topic) : "—";
 
   const ownerLines = [
     `New contact inquiry`,
@@ -104,6 +120,7 @@ export async function submitContact(
     `Name:     ${data.name}`,
     `Email:    ${data.email}`,
     `Org:      ${data.org || "—"}`,
+    `Topic:    ${topicLabel}`,
     `Budget:   ${budgetLabel}`,
     ``,
     `Message:`,
@@ -131,7 +148,9 @@ export async function submitContact(
       to: INBOX,
       from: FROM_ADDRESS,
       replyTo: data.email,
-      subject: `Contact — ${data.name}${data.org ? ` · ${data.org}` : ""}`,
+      /* Topic leads the subject so the inbox sorts itself — a mentorship
+       * enquiry and a build enquiry need different reply modes. */
+      subject: `Contact${data.topic ? ` [${contactTopicLabel(data.topic)}]` : ""} — ${data.name}${data.org ? ` · ${data.org}` : ""}`,
       text: ownerLines.join("\n"),
     }),
     sendEmail({

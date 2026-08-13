@@ -27,9 +27,15 @@ type Option = { value: string; label: string };
 
 type Props = {
   options: readonly Option[];
+  /* Overridable so /mentorship can label its own tier list ("Mentorship
+   * offers") instead of borrowing the /services wording. */
+  ariaLabel?: string;
 };
 
-export default function ServicesNav({ options }: Props) {
+export default function ServicesNav({
+  options,
+  ariaLabel = "Service tiers",
+}: Props) {
   const first = options[0];
   if (!first) throw new Error("ServicesNav needs at least one option");
   const [active, setActive] = useState<string>(first.value);
@@ -48,10 +54,7 @@ export default function ServicesNav({ options }: Props) {
       (entries) => {
         const visible = entries
           .filter((e) => e.isIntersecting)
-          .sort(
-            (a, b) =>
-              a.boundingClientRect.top - b.boundingClientRect.top,
-          );
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
         const top = visible[0];
         if (top) setActive(top.target.id);
       },
@@ -74,13 +77,19 @@ export default function ServicesNav({ options }: Props) {
 
   return (
     <div className="border-separator sticky top-12 z-30 border-y bg-[var(--material-thick)] backdrop-blur-xl backdrop-saturate-150">
-      <div className="flex justify-center px-6 py-3">
-        <SegmentedControl
-          ariaLabel="Service tiers"
-          options={options}
-          value={active}
-          onChange={onChange}
-        />
+      {/* Centred when it fits, horizontally scrollable when it doesn't. The
+       * /mentorship labels are longer than the /services ones and pushed the
+       * whole page wide at 390px; `w-max` + `mx-auto` keeps the centring but
+       * lets the control scroll inside its own box instead. */}
+      <div className="overflow-x-auto px-6 py-3">
+        <div className="mx-auto w-max">
+          <SegmentedControl
+            ariaLabel={ariaLabel}
+            options={options}
+            value={active}
+            onChange={onChange}
+          />
+        </div>
       </div>
     </div>
   );
