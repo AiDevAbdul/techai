@@ -140,3 +140,37 @@ export const sessionFrontmatterSchema = z.object({
   resources: z.array(sessionResourceSchema).optional(),
 });
 export type SessionFrontmatter = z.infer<typeof sessionFrontmatterSchema>;
+
+/*
+ * Mentorship — spec §7.11 (amendment 2026-08-13). Four PKR-priced offers on
+ * one shareable page, ordered cheapest-first so the reader walks up the ladder:
+ * consultation → mentorship → team training → talks & workshops.
+ *
+ * Mirrors `serviceFrontmatterSchema` but with a PKR currency literal and an
+ * `audience` field — /mentorship serves individuals *and* organisations on the
+ * same page, so each card has to say which one it is before anything else.
+ *
+ * `priceValue` is the numeric form of `priceLabel` and drives Schema.org Offer.
+ * Both are required here (unlike /services): the whole point of this page is
+ * that nobody has to email to find out the number.
+ */
+export const mentorshipOfferSchema = z.object({
+  slug: z.enum(["consultation", "mentorship", "team-training", "talks-workshops"]),
+  name: z.string().min(1),
+  tabLabel: z.string().min(1).max(14),
+  audience: z.enum(["Individual", "Team", "Community"]),
+  format: z.string().min(1),
+  duration: z.string().min(1),
+  idealFor: z.string().min(1),
+  priceLabel: z.string().min(1),
+  priceDetail: z.string().min(1),
+  ctaLabel: z.string().min(1),
+  ctaHref: z.string().min(1),
+  deliverables: z.array(z.string().min(1)).min(3).max(7),
+  serviceType: z.string().min(1),
+  priceValue: z.number().int().positive(),
+  priceCurrency: z.literal("PKR"),
+  order: z.number().int().min(1).max(4),
+});
+
+export type MentorshipOffer = z.infer<typeof mentorshipOfferSchema>;

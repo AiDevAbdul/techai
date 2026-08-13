@@ -178,3 +178,62 @@ Free course catalog at `/learn` backed by YouTube Data API v3. Three pages: cata
 Code-side DoD items completed 2026-05-14: README written (env/build/content authoring/deploy documented); banned-phrases sweep clean (no violations); no `console.log` in client code; `vercel.ts` created with security headers.
 
 Remaining (owner-side on live URL): all 9 pages at `techai.pk`; audit-bot e2e (PDF in test inbox); Cal.com booking confirmed; contact form arrival + auto-reply; Plausible 10 events; sitemap accepted by GSC; no third-party "powered by"; Lab Note publish-via-push verified; Lighthouse mobile Perf ≥ 95, A11y ≥ 95, BP ≥ 95, SEO = 100 on `/`, `/work/meetplanner`, `/lab/audit`, `/contact`; axe-core zero violations on same four; OG renders correctly on LinkedIn + iMessage.
+
+---
+
+## #18 — `/mentorship` — priced offer ladder (spec §7.11)
+
+**Status:** done · 2026-08-13.
+
+**Why:** `/services` prices in USD with non-numeric anchors, so it cannot answer
+"what do you charge?" for the individual and local-market buyer. Every such
+enquiry was costing a reply. This is one shareable URL with all four PKR prices
+published in full.
+
+**Offers:** Consultation PKR 10,000 (1 hr, credited against mentorship within 30
+days) · 1:1 Mentorship PKR 20,000/month (4 weekly 1-hr classes, no lock-in) ·
+Team Training PKR 300,000 flat (3–4 weeks, up to 20 people) · Talks & Workshops
+PKR 30,000 half-day / 60,000 full-day (all-inclusive incl. refreshments and
+logistics).
+
+**Implementation:**
+- `lib/content/schemas.ts` — `mentorshipOfferSchema`. Mirrors `serviceFrontmatterSchema` but with a `PKR` currency literal, an `audience` enum (Individual/Team/Community), and required `priceValue` + `priceDetail`.
+- `lib/content/mentorship.ts` — server-only loader, same shape as `services.ts` (`readdir` → gray-matter → zod → sort by `order`, under `"use cache"`).
+- `content/mentorship/{consultation,mentorship,team-training,talks-workshops}.mdx` — four offers, cheapest-first.
+- `app/(marketing)/mentorship/page.tsx` — hero → "Who this is for" (3 cards) → sticky `ServicesNav` → four offer sections → worked 6-month roadmap example → "What I don't promise" → logistics FAQ accordion → closing CTA. Per-offer `Service`+`Offer` JSON-LD (`priceCurrency: "PKR"`) plus one `FAQPage` block.
+- `components/brand/ServicesNav.tsx` — added optional `ariaLabel` prop (defaults to the existing "Service tiers") so this page can label its own tier list.
+- Wiring: `Navbar.tsx` and `Footer.tsx` nav lists, `app/sitemap.ts` (priority 0.9), `app/llms.txt/route.ts`.
+
+**Scope note:** this is the 10th v1 page. `docs/spec.md` §1.1, §7.11, and §17
+amended accordingly per the house rule.
+
+**Follow-up:** the `?topic=` param is wired in task #19.
+
+**DoD:** `npm run build` passes, `/mentorship` prerenders static; `tsc --noEmit`
+clean; all four prices render; 4 × `"priceCurrency":"PKR"` in JSON-LD; sitemap
+includes `/mentorship`.
+
+
+---
+
+## #19 — Wire `?topic=` into the contact form + navbar/segmented-control fixes
+
+**Status:** done · 2026-08-13.
+
+**Why:** every CTA on `/services` and `/mentorship` already linked to
+`/contact?topic=<slug>`, but nothing read the param — enquiries arrived
+unlabelled and a mentorship lead looked identical to a build lead in the inbox.
+
+**Implementation:**
+- `lib/contact-topics.ts` — single source of truth for the nine topic values (`CONTACT_TOPICS`, `isContactTopic`, `contactTopicLabel`). Plain module, imported by both the client form and the Server Action so they cannot drift. Values are live in already-shared links; treat them as stable.
+- `components/forms/TopicField.tsx` — visible "What's this about?" select, preselected from `?topic=`. Visible rather than hidden so direct visitors can still say what they want and a wrong-CTA arrival can correct it. `useSearchParams` forces CSR up to the nearest Suspense boundary on a prerendered route (Next docs: `use-search-params` §Behavior), so the boundary is scoped to this field only — the rest of the form stays in the initial HTML and `/contact` stays static. The fallback is the same markup with no preselection, so there is no layout shift on hydration.
+- `components/forms/ContactForm.tsx` — field added between name/email and org/budget.
+- `app/(marketing)/contact/actions.ts` — `topic` added to the zod schema as a closed enum; unrecognised values are dropped *before* validation and treated as absent, so a stale or hand-edited link never blocks a real enquiry, and nothing arbitrary can reach the email subject. Topic now leads the owner subject (`Contact [1:1 mentorship] — Name · Org`) and appears in the body.
+- `components/brand/Navbar.tsx` — the 8th nav item broke the bar at 768–1023px: labels collided with the logo and "Book a call" wrapped to two lines (measured nav height 79px vs 60px). Inline row now switches on at `lg` instead of `md`, with `shrink-0` on the logo and CTA and a gap that tightens at lg / relaxes at xl. Tablet widths get the Sheet menu.
+- `components/brand/ServicesNav.tsx` — the longer `/mentorship` tab labels pushed the whole page 17px wide at 390px. Wrapper is now `overflow-x-auto` with an inner `mx-auto w-max`, so the control stays centred when it fits and scrolls inside its own box when it doesn't. Also gained an optional `ariaLabel` prop.
+
+**DoD:** verified in headless Chromium — `?topic=mentorship` and `?topic=team-training` preselect; `?topic=DROP TABLE` and a bare `/contact` fall back to empty. Burger/inline switch is clean at the 1023/1024 boundary. Zero horizontal overflow at 390px on `/`, `/services`, `/mentorship`, `/workshops`, `/contact`. Build passes, `/contact` and `/mentorship` both still prerender static, `tsc --noEmit` clean.
+
+**Not verified:** end-to-end email delivery (no `RESEND_API_KEY` locally — the action logs the payload and returns ok in dev). Worth one live submission after deploy to confirm the subject line.
+
+**Noted, not changed:** the budget dropdown is USD-denominated (`Under $5k` … `$40k+`), which reads oddly on a PKR mentorship enquiry. Needs a decision on whether to localise it or hide it for individual topics.

@@ -22,7 +22,8 @@ Every page is graded on the **One-Question Test** from `my-suggestions.md §15`:
 ## 1. Scope
 
 ### 1.1 In scope for v1
-- 9 pages: Home, Work index, 3 Case Studies, Services, Workshops, Lab index, About, Contact.
+- 10 pages: Home, Work index, 3 Case Studies, Services, Mentorship, Workshops, Lab index, About, Contact.
+  (`/mentorship` added by amendment 2026-08-13 — see §7.11.)
 - 1 interactive AI demo: Workflow Audit Bot at `/lab/audit` (streaming, lead-capturing).
 - 2 seed Lab Notes (MDX).
 - Cal.com embed on `/contact` for 30-min discovery booking.
@@ -505,9 +506,46 @@ The single highest-leverage interactive surface. Built on AI SDK v6 + AI Gateway
 ### 7.10 `/contact`
 - Two columns desktop, stacked mobile.
 - Left: Cal.com inline embed (30-min discovery).
-- Right: form (name, email, org, message, budget [optional, dropdown], honeypot).
+- Right: form (name, email, org, topic [optional, dropdown], message, budget [optional, dropdown], honeypot).
+- Topic is preselected from `?topic=` — every offer CTA across `/services` and `/mentorship` links to `/contact?topic=<slug>`. Values live in `lib/contact-topics.ts` and are shared by the form and the Server Action; unrecognised values are treated as absent, never as an error. Topic leads the owner email subject.
 - Form submits to Server Action → Resend → owner inbox + auto-reply to sender.
 - Success: toast + inline confirmation; clear form.
+
+### 7.11 `/mentorship` — Priced offer ladder *(amendment, 2026-08-13)*
+
+**Why it exists.** `/services` sells the corporate engagement in USD with
+non-numeric anchors. It cannot answer "what do you charge?" for the individual
+and local-market buyer, so every such enquiry costs a reply. `/mentorship` is a
+single shareable URL where all four PKR prices are published in full.
+
+**Audience.** Individual professionals switching into IT/AI, experienced people
+(40+) restarting mid-career, plus Pakistani teams and community organisers.
+Distinct enough from the `/services` buyer that mixing them dilutes both.
+
+**Offers** (`content/mentorship/*.mdx`, ordered cheapest-first):
+
+| Order | Offer | Price | Scope |
+|---|---|---|---|
+| 1 | One-Hour Consultation | PKR 10,000 | Single 1-hour 1:1; credited against mentorship if started within 30 days |
+| 2 | 1:1 Mentorship | PKR 20,000 / month | Four weekly 1-hour classes; month-to-month, no lock-in |
+| 3 | Team Training | PKR 300,000 flat | 3–4 weeks, up to 20 people; larger groups quoted separately |
+| 4 | Talks & Workshops | PKR 30,000 half-day · PKR 60,000 full-day | All-inclusive: curriculum, slides, materials, Q&A, refreshments, logistics |
+
+**Structure.** Hero → "Who this is for" (3 cards) → sticky `ServicesNav` →
+four offer sections (same two-column card as §7.4, plus an audience Pill) →
+worked 6-month roadmap example → "What I don't promise" → logistics FAQ
+(accordion) → closing CTA to a free 20-min fit call.
+
+**Contracts.** `mentorshipOfferSchema` in `lib/content/schemas.ts`; loader
+`lib/content/mentorship.ts` mirrors the services loader. `priceValue` +
+`priceDetail` are **required** (unlike §7.4) — publishing the number is the
+page's entire reason to exist. Per-offer `Service` + `Offer` JSON-LD with
+`priceCurrency: "PKR"`, plus one `FAQPage` block.
+
+**Copy rules.** English UI per house rules; the FAQ states Urdu is available in
+1:1 sessions. The "What I don't promise" block is deliberate and must not be
+softened — no job guarantee, no visa/placement, no interview coaching for work
+the mentee cannot do.
 
 ---
 
@@ -765,7 +803,7 @@ A page ships only when **all** are true:
 
 ## 17. Definition of Done (project-level v1)
 
-- [ ] All 9 pages live at `abdulwahabai.com`.
+- [ ] All 10 pages live at `abdulwahabai.com`.
 - [ ] Workflow Audit Bot working end-to-end, PDF arriving in test inbox.
 - [ ] Cal.com booking confirmed in test booking.
 - [ ] Contact form arriving in `CONTACT_INBOX` with auto-reply to sender.

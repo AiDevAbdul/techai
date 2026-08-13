@@ -32,6 +32,7 @@ const COPYRIGHT_YEAR = new Date().getFullYear();
 const SITE_MAP = [
   { href: "/work", label: "Work" },
   { href: "/services", label: "Services" },
+  { href: "/mentorship", label: "Mentorship" },
   { href: "/workshops", label: "Workshops" },
   { href: "/lab", label: "Lab Notes" },
   { href: "/about", label: "About" },

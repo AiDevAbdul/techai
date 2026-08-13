@@ -17,6 +17,7 @@ Operators, Teams, and Communities.
 - [Home](${SITE_URL}/)
 - [Work (case studies)](${SITE_URL}/work)
 - [Services (audit, build, workshop, speaking)](${SITE_URL}/services)
+- [Mentorship & training (1:1 roadmaps, team training, talks — PKR pricing)](${SITE_URL}/mentorship)
 - [Workshops & speaking](${SITE_URL}/workshops)
 - [Lab (field notes)](${SITE_URL}/lab)
 - [About](${SITE_URL}/about)

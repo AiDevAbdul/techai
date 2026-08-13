@@ -23,6 +23,7 @@ const STATIC_PATHS: Array<{
   { path: "", changeFrequency: "weekly", priority: 1.0 },
   { path: "/work", changeFrequency: "monthly", priority: 0.9 },
   { path: "/services", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/mentorship", changeFrequency: "monthly", priority: 0.9 },
   { path: "/workshops", changeFrequency: "monthly", priority: 0.85 },
   { path: "/sessions", changeFrequency: "weekly", priority: 0.82 },
   { path: "/lab", changeFrequency: "weekly", priority: 0.8 },

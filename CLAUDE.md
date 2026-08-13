@@ -4,7 +4,7 @@ Lead-gen portfolio site. Three audiences: Operators, Teams, Communities. Every p
 
 - **Domain:** abdulwahabai.com · **Kickoff:** 2026-05-12 · **Target launch:** 2026-06-02 (3 weeks)
 - **Stack:** Next.js 16 (App Router, TS strict), Tailwind v4, shadcn/ui, AI SDK v6, Vercel (AI Gateway + KV), Resend, Cal.com, Plausible, Contentlayer2 + MDX
-- **Scope v1:** 9 pages (Home, Work, 3 Case Studies, Services, Workshops, Lab, About, Contact) + 1 streaming AI demo at `/lab/audit` + 2 Lab Notes
+- **Scope v1:** 10 pages (Home, Work, 3 Case Studies, Services, Mentorship, Workshops, Lab, About, Contact) + 1 streaming AI demo at `/lab/audit` + 2 Lab Notes
 - **Design:** Apple HIG–inspired light editorial. Fraunces + JetBrains Mono. No dark+neon, no particles, no 3D, no typing animations. Restrained motion, hairline structure, continuous corner curves.
 
 ## Working docs (`docs/`)
