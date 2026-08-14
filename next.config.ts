@@ -20,18 +20,20 @@ const withBundleAnalyzer = bundleAnalyzer({
 /*
  * Security headers — scoped to the third-party origins actually in use:
  * Plausible (analytics script), Google Analytics (gtag.js, supplemental
- * analytics), Cal.com (booking embed), YouTube (nocookie player), Vercel
+ * analytics), Microsoft Clarity (session recordings — loader on
+ * www.clarity.ms, runtime on scripts.clarity.ms, uploads to a.clarity.ms),
+ * Cal.com (booking embed), YouTube (nocookie player), Vercel
  * Analytics/Speed Insights, Resend (server-side only, so not needed in
  * connect-src for the browser).
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://plausible.io https://www.googletagmanager.com https://app.cal.com https://cal.com https://va.vercel-scripts.com",
+  "script-src 'self' 'unsafe-inline' https://plausible.io https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms https://app.cal.com https://cal.com https://va.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "frame-src https://www.youtube-nocookie.com https://cal.com https://app.cal.com",
-  "connect-src 'self' https://plausible.io https://www.google-analytics.com https://app.cal.com https://cal.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+  "connect-src 'self' https://plausible.io https://www.google-analytics.com https://a.clarity.ms https://c.clarity.ms https://app.cal.com https://cal.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
