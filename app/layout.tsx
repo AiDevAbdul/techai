@@ -25,6 +25,13 @@ const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 /*
+ * Microsoft Clarity — session recordings + heatmaps. Only emitted when
+ * NEXT_PUBLIC_CLARITY_PROJECT_ID is set. Behavioural layer on top of the
+ * numbers Plausible/GA report; no PII is captured beyond Clarity's defaults.
+ */
+const clarityProjectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
+
+/*
  * Fraunces — hero H1 + case-study titles only (spec §5.3).
  * Weights 400/500 only (600 and italic dropped for mobile LCP).
  * Variable font; optical sizing engaged via `font-variation-settings: "opsz" auto`
@@ -162,6 +169,15 @@ gtag('js', new Date());
 gtag('config', '${gaMeasurementId}');`}
             </Script>
           </>
+        )}
+        {clarityProjectId && (
+          <Script id="clarity-init" strategy="afterInteractive">
+            {`(function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "${clarityProjectId}");`}
+          </Script>
         )}
         <SkipLink />
         <TooltipProvider delay={350}>
