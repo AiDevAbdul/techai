@@ -24,17 +24,19 @@ const withBundleAnalyzer = bundleAnalyzer({
  * www.clarity.ms, runtime on scripts.clarity.ms, uploads to a regional
  * shard so connect-src is wildcarded to *.clarity.ms),
  * Cal.com (booking embed), YouTube (nocookie player), Vercel
- * Analytics/Speed Insights, Resend (server-side only, so not needed in
- * connect-src for the browser).
+ * Analytics/Speed Insights, Google AdSense (tag on
+ * pagead2.googlesyndication.com; ads are served and framed from
+ * googlesyndication/doubleclick sub-origins), Resend (server-side only, so
+ * not needed in connect-src for the browser).
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://plausible.io https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms https://app.cal.com https://cal.com https://va.vercel-scripts.com",
+  "script-src 'self' 'unsafe-inline' https://plausible.io https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms https://app.cal.com https://cal.com https://va.vercel-scripts.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.g.doubleclick.net https://adservice.google.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "frame-src https://www.youtube-nocookie.com https://cal.com https://app.cal.com",
-  "connect-src 'self' https://plausible.io https://www.google-analytics.com https://*.clarity.ms https://app.cal.com https://cal.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+  "frame-src https://www.youtube-nocookie.com https://cal.com https://app.cal.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.safeframe.googlesyndication.com",
+  "connect-src 'self' https://plausible.io https://www.google-analytics.com https://*.clarity.ms https://app.cal.com https://cal.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.g.doubleclick.net https://adservice.google.com",
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",

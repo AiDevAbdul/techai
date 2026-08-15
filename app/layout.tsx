@@ -32,6 +32,12 @@ const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const clarityProjectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
 
 /*
+ * Google AdSense — site-verification / auto-ads tag. The publisher ID is
+ * public by design, so it lives in source rather than an env var.
+ */
+const adsenseClientId = "ca-pub-3338467259485780";
+
+/*
  * Fraunces — hero H1 + case-study titles only (spec §5.3).
  * Weights 400/500 only (600 and italic dropped for mobile LCP).
  * Variable font; optical sizing engaged via `font-variation-settings: "opsz" auto`
@@ -170,6 +176,12 @@ gtag('config', '${gaMeasurementId}');`}
             </Script>
           </>
         )}
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         {clarityProjectId && (
           <Script id="clarity-init" strategy="afterInteractive">
             {`(function(c,l,a,r,i,t,y){
