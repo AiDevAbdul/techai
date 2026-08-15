@@ -29,11 +29,11 @@ export type SubscribeState = {
 };
 
 const FROM_ADDRESS =
-  process.env.RESEND_FROM_ADDRESS ?? "Abdul <aidevabdul@gmail.com>";
+  process.env.RESEND_FROM_ADDRESS ?? "Abdul Wahab <info@abdulwahabai.com>";
 const INBOX =
   process.env.LAB_INBOX ??
   process.env.CONTACT_INBOX ??
-  "aidevabdul@gmail.com";
+  "info@abdulwahabai.com";
 
 export async function subscribeToLab(
   _prev: SubscribeState,

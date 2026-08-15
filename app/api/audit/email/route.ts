@@ -28,11 +28,11 @@ const captureSchema = z.object({
 });
 
 const FROM_ADDRESS =
-  process.env.RESEND_FROM_ADDRESS ?? "Abdul <aidevabdul@gmail.com>";
+  process.env.RESEND_FROM_ADDRESS ?? "Abdul Wahab <info@abdulwahabai.com>";
 const OWNER_INBOX =
   process.env.AUDIT_INBOX ??
   process.env.CONTACT_INBOX ??
-  "aidevabdul@gmail.com";
+  "info@abdulwahabai.com";
 
 async function sendWithAttachment(input: {
   to: string;
@@ -181,7 +181,7 @@ export async function POST(req: Request): Promise<Response> {
         ok: false,
         reason: "send_failed",
         message:
-          "Couldn't send the PDF — please email aidevabdul@gmail.com for a copy.",
+          "Couldn't send the PDF — please email info@abdulwahabai.com for a copy.",
       },
       { status: 502 },
     );

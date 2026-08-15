@@ -1,4 +1,4 @@
-# Tasks — Portfolio Build (`techai.pk`)
+# Tasks — Portfolio Build (`abdulwahabai.com`)
 
 Derived from `plan.md`. 17 tasks: Day 0 pre-flight → Days 1–15 build → §8 DoD launch gate.
 Kickoff: 2026-05-12 · Target launch: 2026-06-02.
@@ -9,13 +9,13 @@ Kickoff: 2026-05-12 · Target launch: 2026-06-02.
 
 **Status:** owner-side · scaffolding decisions locked, accounts/DNS pending owner action.
 
-Provision Vercel project, Resend (techai.pk DKIM/SPF/DMARC), AI Gateway + Anthropic provider + $50/mo alert, Upstash Redis (Vercel KV deprecated), Cal.com, Plausible, Mux, GSC. Push DNS at registrar (A apex, CNAME www, Resend records). Resolve open questions Q1–Q7 per §1.3. Lock pnpm + Node 22 + App Router + TS strict + Tailwind v4 + shadcn with custom tokens.
+Provision Vercel project, Resend (`abdulwahabai.com` DKIM/SPF/DMARC — ✓ verified 2026-08-15, see plan.md §0.1), AI Gateway + Anthropic provider + $50/mo alert, Upstash Redis (Vercel KV deprecated), Cal.com, Plausible, Mux, GSC. Push DNS at registrar (A apex, CNAME www, Resend records). Resolve open questions Q1–Q7 per §1.3. Lock pnpm + Node 22 + App Router + TS strict + Tailwind v4 + shadcn with custom tokens.
 
 **Env keys the codebase consumes (graceful-degrade when missing):**
 - `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`
 - `NEXT_PUBLIC_CAL_LINK` (e.g. `abdulwahab/30min`)
 - `NEXT_PUBLIC_MUX_PLAYBACK_ID` (Urdu greeting)
-- `RESEND_API_KEY`, `RESEND_FROM_ADDRESS`, `CONTACT_INBOX`, `WORKSHOP_INBOX`, `AUDIT_INBOX`, `LAB_INBOX`
+- `RESEND_API_KEY`, `RESEND_FROM_ADDRESS`, `CONTACT_INBOX`, `WORKSHOP_INBOX`, `AUDIT_INBOX`, `SESSIONS_INBOX`, `LAB_INBOX` — all set on Vercel production 2026-08-15; each inbox var must be set explicitly, `CONTACT_INBOX` alone is not enough
 - `AI_GATEWAY_API_KEY` (Vercel AI Gateway)
 - `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
 - `HCAPTCHA_SECRET` (optional — gates workshop form captcha verification)
@@ -117,9 +117,9 @@ Three-paragraph editorial body; speaking/workshop 16:9 photo (`<Image>` `priorit
 
 ## #13 — Day 12 — Audit Bot capture, PDF, rate-limit
 
-**Status:** complete (2026-05-13) — Capture form inline below the streaming hypothesis (name + work email). `app/api/audit/email/route.ts` renders branded two-page PDF via `@react-pdf/renderer` (`renderToBuffer`) — page 1 = hypothesis (markdown-parsed: H2 / fenced code / bullets / paragraphs), page 2 = the visitor's five inputs. Resend fans out: PDF to visitor + transcript+PDF copy to owner inbox (`AUDIT_INBOX` → `CONTACT_INBOX` → `aidevabdul@gmail.com`). Rate limit 10 starts/IP/hour via `@upstash/redis` (`lib/audit/rate-limit.ts`, fixed window; deprecated `@vercel/kv` replaced per Vercel Marketplace guidance). Fail-open on Redis outage. Plausible events `audit_start`, `audit_complete`, `audit_email_capture` wired in the client.
+**Status:** complete (2026-05-13) — Capture form inline below the streaming hypothesis (name + work email). `app/api/audit/email/route.ts` renders branded two-page PDF via `@react-pdf/renderer` (`renderToBuffer`) — page 1 = hypothesis (markdown-parsed: H2 / fenced code / bullets / paragraphs), page 2 = the visitor's five inputs. Resend fans out: PDF to visitor + transcript+PDF copy to owner inbox (`AUDIT_INBOX` → `CONTACT_INBOX` → `info@abdulwahabai.com`). Rate limit 10 starts/IP/hour via `@upstash/redis` (`lib/audit/rate-limit.ts`, fixed window; deprecated `@vercel/kv` replaced per Vercel Marketplace guidance). Fail-open on Redis outage. Plausible events `audit_start`, `audit_complete`, `audit_email_capture` wired in the client.
 
-**Owner-side wiring still needed before launch:** `AI_GATEWAY_API_KEY` (Vercel AI Gateway), `RESEND_API_KEY` + verified domain, `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN`, `$50/mo` AI Gateway cost alert. The code degrades gracefully when each is missing.
+**Owner-side wiring still needed before launch:** `AI_GATEWAY_API_KEY` (Vercel AI Gateway), ~~`RESEND_API_KEY` + verified domain~~ (✓ 2026-08-15), `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN`, `$50/mo` AI Gateway cost alert. The code degrades gracefully when each is missing.
 
 ---
 
@@ -141,7 +141,7 @@ Three-paragraph editorial body; speaking/workshop 16:9 photo (`<Image>` `priorit
 
 **Status:** owner-side · launch operation; runs against the live Vercel project.
 
-Final copy pass against banned-phrases list (spec §13); zero `console.log` in client + no console errors/warnings; DNS cutover to production, verify `www → apex` 308; swap Resend production keys; submit sitemap to GSC; test Cal.com booking end-to-end; test contact form arrival + auto-reply; test audit-bot full flow (5 questions → hypothesis → email capture → PDF in test inbox); verify Plausible receiving all 10 events; owner sanity-test publishing a Lab Note by MDX push (no manual rebuild).
+Final copy pass against banned-phrases list (spec §13); zero `console.log` in client + no console errors/warnings; DNS cutover to production, verify `www → apex` 308; swap Resend production keys (✓ 2026-08-15); submit sitemap to GSC; test Cal.com booking end-to-end; ~~test contact form arrival + auto-reply~~ (✓ 2026-08-15); test audit-bot full flow (5 questions → hypothesis → email capture → PDF in test inbox); verify Plausible receiving all 10 events; owner sanity-test publishing a Lab Note by MDX push (no manual rebuild).
 
 ---
 
@@ -177,7 +177,7 @@ Free course catalog at `/learn` backed by YouTube Data API v3. Three pages: cata
 
 Code-side DoD items completed 2026-05-14: README written (env/build/content authoring/deploy documented); banned-phrases sweep clean (no violations); no `console.log` in client code; `vercel.ts` created with security headers.
 
-Remaining (owner-side on live URL): all 9 pages at `techai.pk`; audit-bot e2e (PDF in test inbox); Cal.com booking confirmed; contact form arrival + auto-reply; Plausible 10 events; sitemap accepted by GSC; no third-party "powered by"; Lab Note publish-via-push verified; Lighthouse mobile Perf ≥ 95, A11y ≥ 95, BP ≥ 95, SEO = 100 on `/`, `/work/meetplanner`, `/lab/audit`, `/contact`; axe-core zero violations on same four; OG renders correctly on LinkedIn + iMessage.
+Remaining (owner-side on live URL): all 9 pages at `abdulwahabai.com`; audit-bot e2e (PDF in test inbox); Cal.com booking confirmed; ~~contact form arrival + auto-reply~~ (✓ 2026-08-15); Plausible 10 events; sitemap accepted by GSC; no third-party "powered by"; Lab Note publish-via-push verified; Lighthouse mobile Perf ≥ 95, A11y ≥ 95, BP ≥ 95, SEO = 100 on `/`, `/work/meetplanner`, `/lab/audit`, `/contact`; axe-core zero violations on same four; OG renders correctly on LinkedIn + iMessage.
 
 ---
 
@@ -234,6 +234,6 @@ unlabelled and a mentorship lead looked identical to a build lead in the inbox.
 
 **DoD:** verified in headless Chromium — `?topic=mentorship` and `?topic=team-training` preselect; `?topic=DROP TABLE` and a bare `/contact` fall back to empty. Burger/inline switch is clean at the 1023/1024 boundary. Zero horizontal overflow at 390px on `/`, `/services`, `/mentorship`, `/workshops`, `/contact`. Build passes, `/contact` and `/mentorship` both still prerender static, `tsc --noEmit` clean.
 
-**Not verified:** end-to-end email delivery (no `RESEND_API_KEY` locally — the action logs the payload and returns ok in dev). Worth one live submission after deploy to confirm the subject line.
+**Verified 2026-08-15:** end-to-end email delivery confirmed by live production submission — owner notification and visitor auto-reply both delivered, `spf/dkim/dmarc=pass`. Note the graceful-degradation path means a misconfigured inbox looks identical to success from the UI; check Resend's log, not the toast.
 
 **Noted, not changed:** the budget dropdown is USD-denominated (`Under $5k` … `$40k+`), which reads oddly on a PKR mentorship enquiry. Needs a decision on whether to localise it or hide it for individual topics.

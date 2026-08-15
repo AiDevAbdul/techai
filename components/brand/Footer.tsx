@@ -26,7 +26,7 @@ const COPYRIGHT_YEAR = new Date().getFullYear();
  * plan §2 Day 2 — keeps the link from being a broken 404). Full Urdu UI is
  * v2 scope per spec §1.2.
  *
- * Contact email: aidevabdul@gmail.com
+ * Contact email: info@abdulwahabai.com
  */
 
 const SITE_MAP = [
@@ -91,10 +91,10 @@ export default function Footer() {
             </p>
             <div className="space-y-2">
               <a
-                href="mailto:aidevabdul@gmail.com"
+                href="mailto:info@abdulwahabai.com"
                 className="text-ink-secondary hover:text-ink text-footnote block transition-colors duration-[var(--dur-fast)]"
               >
-                aidevabdul@gmail.com
+                info@abdulwahabai.com
               </a>
               <a
                 href="https://wa.me/923489848136"

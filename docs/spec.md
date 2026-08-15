@@ -88,7 +88,7 @@ Per `my-suggestions.md §13`: typing animations, particle / neural-net backgroun
 | Booking | **Cal.com inline embed** | `/contact` page; brand-color override = forest green. |
 | Analytics | **Vercel Analytics** + **Plausible** | Plausible for content/SEO; Vercel for Web Vitals. |
 | AI demo | **Vercel AI SDK v6** + **AI Gateway** | Streaming on Edge; model: `anthropic/claude-sonnet-4-6`. |
-| Email infra | Resend domain on `abdulwahabai.com` | SPF/DKIM/DMARC verified before launch. |
+| Email infra | Resend sends on `abdulwahabai.com`; Google Workspace receives | SPF/DKIM/DMARC all pass — verified 2026-08-15. See plan.md §0.1. |
 | Deploy | Vercel | Single project; preview branches enabled. |
 | Config | **`vercel.ts`** (not `vercel.json`) | Per current Vercel guidance. |
 | Package manager | **npm** | Lockfile (`package-lock.json`) committed. (Was pnpm in v1 draft; deviated 2026-05-12 — see plan §9.) |
@@ -717,27 +717,41 @@ vercel.ts
 # Build
 NEXT_PUBLIC_SITE_URL=https://abdulwahabai.com
 
-# Email
+# Email — Resend sends, Google Workspace receives (plan.md §0.1)
 RESEND_API_KEY=
-CONTACT_INBOX=hello@abdulwahabai.com
-CONTACT_FROM=Abdul Wahab <hello@abdulwahabai.com>
+RESEND_FROM_ADDRESS=Abdul Wahab <info@abdulwahabai.com>
+CONTACT_INBOX=info@abdulwahabai.com
+AUDIT_INBOX=info@abdulwahabai.com
+WORKSHOP_INBOX=info@abdulwahabai.com
+SESSIONS_INBOX=info@abdulwahabai.com
+LAB_INBOX=info@abdulwahabai.com
+
+# Forms
+HCAPTCHA_SECRET=
 
 # AI
 AI_GATEWAY_API_KEY=
 AUDIT_MODEL=anthropic/claude-sonnet-4-6
 
-# Rate limit (Vercel KV)
-KV_REST_API_URL=
-KV_REST_API_TOKEN=
+# Rate limit (Upstash Redis — Vercel KV deprecated)
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
 
 # Analytics
 NEXT_PUBLIC_PLAUSIBLE_DOMAIN=abdulwahabai.com
+NEXT_PUBLIC_GA_MEASUREMENT_ID=
+NEXT_PUBLIC_CLARITY_PROJECT_ID=
 
 # Booking
-NEXT_PUBLIC_CAL_USERNAME=abdulwahab
+NEXT_PUBLIC_CAL_LINK=abdulwahab/30min
+
+# Video
+NEXT_PUBLIC_MUX_PLAYBACK_ID=
 ```
 
-All public env vars `NEXT_PUBLIC_` prefixed. Secrets only in Vercel project env (never committed).
+All public env vars `NEXT_PUBLIC_` prefixed. Secrets only in Vercel project env (never committed). `.env.example` is the authoritative list — keep it and this block in sync.
+
+Each inbox var falls back to `CONTACT_INBOX`, then to a hardcoded default in the action. **Setting `CONTACT_INBOX` alone is not sufficient on Vercel** — the four others are set explicitly in production and a stale value there silently misroutes that form's leads while every other form looks healthy.
 
 ### 13.4 Git workflow
 - Trunk-based; PRs into `main`; preview deploys per branch.
@@ -806,7 +820,7 @@ A page ships only when **all** are true:
 - [ ] All 10 pages live at `abdulwahabai.com`.
 - [ ] Workflow Audit Bot working end-to-end, PDF arriving in test inbox.
 - [ ] Cal.com booking confirmed in test booking.
-- [ ] Contact form arriving in `CONTACT_INBOX` with auto-reply to sender.
+- [x] Contact form arriving in `CONTACT_INBOX` with auto-reply to sender. — *verified 2026-08-15, live production submission, both legs delivered*
 - [ ] Plausible receiving events for the 10 custom events listed in §12.
 - [ ] Submitted to Google Search Console; sitemap accepted.
 - [ ] No "powered by" branding from third parties visible in chrome.
@@ -958,6 +972,7 @@ BLOB_READ_WRITE_TOKEN=
 | 2026-05-14 | V2 second Lab demo: ROI calculator (preferred) or diagram generator — decide at v2 kickoff | conversation 2026-05-14; §19.1 |
 | 2026-05-14 | V2 search: Pagefind (static, zero runtime cost) over Algolia or custom | conversation 2026-05-14; §19.2 |
 | 2026-05-14 | V2 gated by v1 90-day metrics — fix conversion before adding features | conversation 2026-05-14; §19 |
+| 2026-08-15 | Owner email is `info@abdulwahabai.com` (was `aidevabdul@gmail.com`); Resend sends, Google Workspace receives; SPF/DKIM/DMARC verified | plan.md §0.1; §13.3 |
 
 ---
 

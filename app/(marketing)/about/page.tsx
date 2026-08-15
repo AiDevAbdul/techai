@@ -20,7 +20,7 @@ import UrduGreeting from "@/components/brand/UrduGreeting";
  */
 
 const SITE_URL = "https://abdulwahabai.com";
-const OWNER_EMAIL = "aidevabdul@gmail.com";
+const OWNER_EMAIL = "info@abdulwahabai.com";
 
 export const metadata: Metadata = {
   title: "About — engineer who teaches",

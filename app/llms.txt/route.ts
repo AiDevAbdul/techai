@@ -25,7 +25,7 @@ Operators, Teams, and Communities.
 
 ## Contact
 
-Email: [aidevabdul@gmail.com](mailto:aidevabdul@gmail.com)
+Email: [info@abdulwahabai.com](mailto:info@abdulwahabai.com)
 `;
 }
 

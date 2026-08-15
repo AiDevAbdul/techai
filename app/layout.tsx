@@ -91,7 +91,7 @@ const organizationJsonLd = {
     "@type": "Person",
     name: "Abdul Wahab",
   },
-  email: "mailto:aidevabdul@gmail.com",
+  email: "mailto:info@abdulwahabai.com",
   description:
     "Audits, builds, and workshops that turn AI from a buzzword into routed, observable workflows.",
 };

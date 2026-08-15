@@ -19,7 +19,7 @@ Lead-gen portfolio site. Three audiences: Operators, Teams, Communities. Every p
 - The spec is the contract. If code and spec disagree, fix the code or amend the spec — never silently diverge.
 - English-only UI in v1. Urdu video greeting on `/about` is the only Urdu surface. Full Urdu UI is v2.
 - Three case studies is the cap (MeetPlanner, Marketing Dashboard, Printing Press). Do not add a fourth.
-- Owner email: `aidevabdul@gmail.com`.
+- Owner email: `info@abdulwahabai.com`.
 
 ## Next.js 16 — read before touching framework code
 

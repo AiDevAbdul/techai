@@ -1,4 +1,4 @@
-# Portfolio Build Plan — `techai.pk`
+# Portfolio Build Plan — `abdulwahabai.com`
 
 > Execution plan for `spec.md`. Covers the v1 3-week build (Days 0–15) and the v2 5-week extended scope (Days 16–38).
 > Owner: Abdul Wahab · Build lead: Claude (Opus 4.7) · v1 kickoff: 2026-05-12 · v1 target launch: 2026-06-02 · v2 start: gated on v1 metrics (see §10).
@@ -15,15 +15,46 @@ The spec was drafted against `abdulwahab.dev`, briefly reconciled to `techai.pk`
 |---|---|
 | Primary domain | `abdulwahabai.com` |
 | `NEXT_PUBLIC_SITE_URL` | `https://abdulwahabai.com` |
-| Resend `from` | `Abdul Wahab <hello@abdulwahabai.com>` |
-| `CONTACT_INBOX` | `hello@abdulwahabai.com` (alias → `aidevabdul@gmail.com` until inbox is provisioned) |
+| Resend `from` (`RESEND_FROM_ADDRESS`) | `Abdul Wahab <info@abdulwahabai.com>` |
+| `CONTACT_INBOX` (and `AUDIT_` / `WORKSHOP_` / `SESSIONS_` / `LAB_`) | `info@abdulwahabai.com` — a real Google Workspace mailbox, no alias indirection |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | `abdulwahabai.com` |
 | Person schema `url` | `https://abdulwahabai.com` |
 | OG / canonical base | `https://abdulwahabai.com` |
-| Email infra | Resend domain on `abdulwahabai.com`; SPF / DKIM / DMARC verified before launch |
+| Email infra | Resend sends, Google Workspace receives; SPF / DKIM / DMARC all pass — **verified 2026-08-15**, see §0.1 |
 | Redirect rule | `www.abdulwahabai.com` → `abdulwahabai.com` (308) |
 
 Resolves spec §15 Q1. Update spec §3 + §13.3 + §18 with a one-line decisions-log entry on Day 1.
+
+### 0.1 Email architecture (verified 2026-08-15)
+
+Two providers, deliberately split. **Resend** sends app-to-human transactional mail from the five form actions (all share `lib/email/send.ts`). **Google Workspace** owns the `info@abdulwahabai.com` mailbox and all receiving.
+
+They don't collide because they authenticate in different namespaces: Resend on the `send.` subdomain with selector `resend._domainkey`, Workspace on the root with `google._domainkey`.
+
+Authoritative DNS lives at **Namecheap** (`dns1/dns2.registrar-servers.com`):
+
+| Type | Host | Value | Priority |
+|---|---|---|---|
+| MX | `@` | `smtp.google.com` | 1 |
+| TXT | `@` | `v=spf1 include:_spf.google.com ~all` | — |
+| TXT | `google._domainkey` | *(Workspace DKIM)* | — |
+| TXT | `resend._domainkey` | *(Resend DKIM, `p=MIGf…DRBm6Aw…`)* | — |
+| MX | `send` | `feedback-smtp.ap-northeast-1.amazonses.com` | 10 |
+| TXT | `send` | `v=spf1 include:amazonses.com ~all` | — |
+| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:info@abdulwahabai.com` | — |
+
+Verified end-to-end on 2026-08-15: `spf=pass`, `dkim=pass` (`d=abdulwahabai.com`, aligned with `From:`), `dmarc=pass`.
+
+**Traps — read before touching DNS:**
+
+1. **A full record set also exists in Vercel DNS and is inert.** Nameservers point at Namecheap, so Vercel shows `Nameservers: Third Party` and its zone is a shadow no resolver reads. `vercel dns ls` displays records that look correct and do nothing. Verify only with `dig @dns1.registrar-servers.com`.
+2. **DNSSEC is live at Namecheap** (DS published at the TLD, resolvers set `ad`). Any nameserver migration must disable DNSSEC first and wait for the DS to clear, or site and email both go dark.
+3. **Namecheap hides MX records** from the Host Records table. They live in a separate *Mail Settings* section, which must be switched from *Private Email* to *Custom MX* before MX rows appear.
+4. **Exactly one root SPF TXT.** Merge new senders into the existing `include:` chain; two root SPF records is a permerror that fails every sender.
+5. **Never point the root MX at Resend inbound.** Receiving is disabled on the Resend domain deliberately — the root MX belongs to Workspace.
+6. Resend's free plan allows **one domain**; staging a second sending domain needs an upgrade.
+
+PrivateEmail (Namecheap) was the previous mailbox provider and is retired.
 
 ---
 
@@ -35,23 +66,23 @@ Order-of-operations matters here — Resend and AI Gateway both need DNS / API k
 
 1. **Accounts & credentials**
    - Vercel project created, linked to GitHub repo `techai`.
-   - Resend account; add `techai.pk` as a verified sending domain (DKIM CNAME + SPF TXT + DMARC TXT pushed at registrar).
+   - Resend account; add `abdulwahabai.com` as a verified sending domain (DKIM TXT + `send` MX/TXT pushed at registrar). ✓ done 2026-08-15 — see §0.1.
    - Vercel AI Gateway enabled; `AI_GATEWAY_API_KEY` issued; spend alert configured at $50/mo.
    - Anthropic provider attached to Gateway with `claude-sonnet-4-6` access. OpenAI fallback (`gpt-5`) optional but recommended.
    - Vercel KV (or Upstash) instance for audit-bot rate limiting; `KV_REST_API_URL` + `KV_REST_API_TOKEN`.
    - Cal.com account, public username, 30-min "Discovery call" event type, forest-green brand override.
-   - Plausible site at `techai.pk`.
+   - Plausible site at `abdulwahabai.com`.
    - Mux account (free tier) — defer asset upload to Day 8.
-   - Google Search Console property for `techai.pk` (HTML / DNS verification stored for Day 15).
+   - Google Search Console property for `abdulwahabai.com` (HTML / DNS verification stored for Day 15).
 
 2. **DNS at registrar** (one pass, before code):
    - `A` apex → Vercel.
    - `CNAME www` → Vercel.
-   - Resend records (DKIM, SPF, DMARC).
+   - Resend records (DKIM, `send` SPF MX + TXT) and Google Workspace records (MX, root SPF, DKIM) + DMARC. ✓ done 2026-08-15 — see §0.1.
    - Plausible — none required (script-based).
 
 3. **Open-questions resolution** (block Day 1):
-   - Q1 Domain — **resolved: `techai.pk`**.
+   - Q1 Domain — **resolved: `abdulwahabai.com`** (see §0; supersedes the earlier `techai.pk` reconciliation).
    - Q2 Pricing — default to "Audit — starting from $1,500" visible on `/services`. Confirm with owner; if no by Day 6, ship the default.
    - Q3 Testimonials — collect one quote from MeetPlanner or Printing Press; if none by Day 10, ship without the section (don't fabricate).
    - Q4 First public engagement — list one for `/workshops`; if none, replace logos block with a 2-line "speaking inquiries welcomed" stub.
@@ -175,7 +206,7 @@ Goal: every non-interactive page shipped with real content. Resend wired. Cal.co
 - Form fields: name, email, org, message, budget (optional dropdown), honeypot.
 - Server Action `/api/contact` → Resend transactional send to `CONTACT_INBOX` + auto-reply to sender.
 - Success toast via sonner; inline confirmation; form clears.
-- Verify SPF/DKIM/DMARC pass via Resend dashboard before Day 11.
+- Verify SPF/DKIM/DMARC pass via Resend dashboard before Day 11. ✓ all three pass as of 2026-08-15 (§0.1).
 
 **Week 2 result:** shipped on time (2026-05-13). Resend wired with graceful no-key dev path. Cal.com embed env-gated. Testimonial slot omitted (Q3 unresolved — correct per plan). Workshop photo + Urdu video are the two remaining owner-side assets.
 
@@ -228,7 +259,7 @@ Goal: Audit Bot live, performance + a11y + SEO budgets met, content frozen, laun
 - Final pass on copy across all 9 pages against banned-phrases list (spec §13).
 - Confirm no `console.log` in client code; no console errors/warnings.
 - DNS cutover to production; verify `www → apex` 308.
-- Resend production keys swapped in.
+- Resend production keys swapped in. ✓ 2026-08-15 (account migrated; `RESEND_API_KEY` + all five `*_INBOX` vars rewritten on Vercel production).
 - Submit sitemap to Google Search Console.
 - Test booking through Cal.com end-to-end.
 - Test contact form arrives in `CONTACT_INBOX` with auto-reply.
@@ -238,7 +269,7 @@ Goal: Audit Bot live, performance + a11y + SEO budgets met, content frozen, laun
 
 **Week 3 result (Days 11–14):** Audit Bot ships with `streamText` + Anthropic provider direct (AI Gateway switched out — see §9 decisions). PDF renders server-side via `@react-pdf/renderer`; rate-limit via `@upstash/redis`. All 10 Plausible events wired. PPR + `use cache` enabled. Banned-phrases sweep clean; no `console.log` in client code; README and `vercel.ts` added 2026-05-14.
 
-**Day 15 remaining (owner-side):** DNS cutover, Resend production keys, Cal.com e2e test, contact form e2e, audit-bot e2e (PDF in test inbox), Plausible 10-event verification, GSC sitemap submission, Lab Note publish-via-push sanity check.
+**Day 15 remaining (owner-side):** ~~DNS cutover~~, ~~Resend production keys~~, Cal.com e2e test, ~~contact form e2e~~, audit-bot e2e (PDF in test inbox), Plausible 10-event verification, GSC sitemap submission, Lab Note publish-via-push sanity check. Email items cleared 2026-08-15 — see §0.1.
 
 ---
 
@@ -266,14 +297,14 @@ Anything on the critical path that slips by 1 day moves launch. Buffer days exis
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
 | `contentlayer2` incompatible with Next 16 build | Medium | High (blocks Day 4) | Fall back to `next-mdx-remote` within 2h; spec §15 Q7 already pre-authorizes |
-| Resend DNS propagation slow | Low | Medium | Push DNS Day 0; verify by Day 2 at latest |
+| ~~Resend DNS propagation slow~~ | — | — | **Retired 2026-08-15** — domain verified. The real failure was records written into the inert Vercel DNS zone instead of the authoritative Namecheap zone; see §0.1 trap 1 |
 | Urdu video not recorded by Day 8 | Medium | Medium | Ship `/about` without video; add poster + "video coming" caption; replace pre-launch |
 | AI Gateway model unavailable / rate-limited mid-build | Low | Medium | OpenAI `gpt-5` fallback configured at Gateway level |
 | No testimonial available by Day 10 | High | Low | Section omitted cleanly; do not fabricate (kills credibility) |
 | PDF rendering pipeline complexity | Medium | Medium | If `@react-pdf/renderer` proves brittle, fall back to emailing hypothesis as Markdown body for v1 |
 | Lighthouse mobile < 95 on home | Low | High (DoD blocker) | Day 14 reserved for perf; LCP image budget tight — keep hero text-first |
 | Cal.com brand override doesn't apply via embed config | Low | Low | Accept default; revisit post-launch |
-| `techai.pk` registrar slow to propagate | Low | High (blocks cutover) | DNS pre-staged Day 0; launch with `*.vercel.app` if needed and cutover post-launch |
+| `abdulwahabai.com` registrar slow to propagate | Low | High (blocks cutover) | DNS pre-staged Day 0; launch with `*.vercel.app` if needed and cutover post-launch |
 
 ---
 
@@ -303,10 +334,10 @@ If any v2 feature gets requested mid-v1 build, push back and link spec §1.2. Th
 
 The launch goes live when **every** item below is green. No partial launches.
 
-- [ ] All 9 pages live at `techai.pk`. — *owner: DNS cutover*
+- [ ] All 9 pages live at `abdulwahabai.com`. — *owner: DNS cutover*
 - [ ] Workflow Audit Bot end-to-end: 5 questions → hypothesis → PDF arrives in test inbox. — *owner: provision ANTHROPIC_API_KEY + RESEND_API_KEY*
 - [ ] Cal.com booking confirmed in a real test booking. — *owner: set NEXT_PUBLIC_CAL_LINK*
-- [ ] Contact form arrives in `CONTACT_INBOX` with auto-reply to sender. — *owner: Resend domain + keys*
+- [x] Contact form arrives in `CONTACT_INBOX` with auto-reply to sender. — *verified 2026-08-15 via live production submission; both legs delivered*
 - [ ] Plausible receiving all 10 events (spec §12). — *owner: set NEXT_PUBLIC_PLAUSIBLE_DOMAIN*
 - [ ] Sitemap submitted to Search Console; accepted. — *owner: GSC property*
 - [x] No third-party "powered by" branding visible. — *confirmed clean*
@@ -338,6 +369,7 @@ The launch goes live when **every** item below is green. No partial launches.
 | 2026-05-14 | V2 second Lab demo: ROI calculator (preferred over diagram generator). Decide definitively at v2 kickoff. |
 | 2026-05-14 | V2 search: Pagefind (static, post-build CLI) over Algolia or custom solution. |
 | 2026-05-14 | V2 gate: do not start v2 until v1 90-day metrics are on-track (≥ 4 discovery calls/month, ≥ 25 audit bot completions). |
+| 2026-08-15 | Email infrastructure locked and verified. Owner address moved from `aidevabdul@gmail.com` to `info@abdulwahabai.com` across all code, copy, JSON-LD, `llms.txt`, and the audit PDF (35 replacements, 17 files). Split architecture: **Resend** sends (root domain verified, `send.` subdomain auth), **Google Workspace** receives (root MX); Namecheap PrivateEmail retired. Resend account migrated — `RESEND_API_KEY` and all five `*_INBOX` vars rewritten on Vercel production. SPF/DKIM/DMARC all pass with DKIM aligned to `From:`. Full record set + DNS traps documented in §0.1. |
 | 2026-06-13 | Added LMS (`/learn`) as a post-v1 feature (Task #18). Three pages: catalog, course overview, lesson player. Backed by YouTube Data API v3 with hourly cache — new videos uploaded to either playlist appear on-site automatically within 1 hour. Static fallback arrays ensure build never fails without `YOUTUBE_API_KEY`. Lesson URL slug = YouTube video ID for permanent stability. `YOUTUBE_API_KEY` added to Vercel production env. |
 
 ---
@@ -354,7 +386,7 @@ Before starting any v2 code:
 2. **Provision Neon Postgres** — via Vercel Marketplace; copy `DATABASE_URI` to Vercel project env (production + preview).
 3. **Payload secret** — generate `PAYLOAD_SECRET` (32-char random string); add to Vercel env.
 4. **Vercel Blob** — enable in Vercel project; copy `BLOB_READ_WRITE_TOKEN` to env.
-5. **GA4 property** — create GA4 property at `techai.pk`; copy `NEXT_PUBLIC_GA_MEASUREMENT_ID` to Vercel env.
+5. **GA4 property** — create GA4 property at `abdulwahabai.com`; copy `NEXT_PUBLIC_GA_MEASUREMENT_ID` to Vercel env.
 6. **ROI calculator decision** — review audit bot usage patterns; confirm second Lab demo is ROI calculator (or diagram generator). This locks Phase 4 scope.
 
 ---
