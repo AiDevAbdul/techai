@@ -129,6 +129,10 @@ export const metadata: Metadata = {
       "/og/default?title=AI%20workflow%20systems%20for%20operators%2C%20teams%2C%20and%20communities",
     ],
   },
+  other: {
+    // AdSense site connection — must appear in <head> on every page.
+    "google-adsense-account": adsenseClientId,
+  },
 };
 
 export const viewport: Viewport = {
