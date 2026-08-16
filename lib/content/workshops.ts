@@ -2,6 +2,7 @@ import "server-only";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { cacheLife } from "next/cache";
 import {
   workshopTopicsFileSchema,
   pastEngagementsFileSchema,
@@ -20,6 +21,7 @@ const CONTENT_DIR = path.join(process.cwd(), "content", "workshops");
 
 export async function getWorkshopTopics(): Promise<WorkshopTopic[]> {
   "use cache";
+  cacheLife("max");
   const raw = await fs.readFile(path.join(CONTENT_DIR, "topics.mdx"), "utf8");
   const parsed = matter(raw);
   const { topics } = workshopTopicsFileSchema.parse(parsed.data);
@@ -28,6 +30,7 @@ export async function getWorkshopTopics(): Promise<WorkshopTopic[]> {
 
 export async function getPastEngagements(): Promise<PastEngagement[]> {
   "use cache";
+  cacheLife("max");
   const raw = await fs.readFile(
     path.join(CONTENT_DIR, "past-engagements.mdx"),
     "utf8",

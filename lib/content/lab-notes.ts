@@ -16,10 +16,11 @@ import {
  * Sorting: newest first by `date` (descending). Frontmatter does not carry an
  * explicit `order` field — date is the order.
  *
- * Caching: `'use cache'` with cacheLife('hours') + cacheTag('lab') per
- * spec §10. Notes ship via MDX in the repo; new notes invalidate via
- * `revalidateTag('lab')` after a content push hook (or implicit
- * redeployment).
+ * Caching: `'use cache'` with cacheLife('max') + cacheTag('lab') per
+ * spec §10. Notes ship via MDX in the repo, so nothing here changes between
+ * deployments — a time-based revalidate would only rewrite identical bytes
+ * into the ISR store on a timer. Invalidation is `revalidateTag('lab')` after
+ * a content push hook, or implicit redeployment.
  */
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "lab");
@@ -32,7 +33,7 @@ export type LabNote = {
 
 async function loadAll(): Promise<LabNote[]> {
   "use cache";
-  cacheLife("hours");
+  cacheLife("max");
   cacheTag("lab");
   let entries: string[];
   try {

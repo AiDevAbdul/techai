@@ -22,7 +22,7 @@ async function fetchAllPlaylistItems(
       ...(pageToken ? { pageToken } : {}),
     });
     const res = await fetch(`${YT_API}/playlistItems?${params}`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 86400 },
     });
     if (!res.ok) break;
     const data = (await res.json()) as {
@@ -61,7 +61,7 @@ async function fetchVideoDetails(
       key: apiKey,
     });
     const res = await fetch(`${YT_API}/videos?${params}`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 86400 },
     });
     if (!res.ok) continue;
     const data = (await res.json()) as {
@@ -96,7 +96,10 @@ function parseDuration(iso: string): string {
 
 export async function getPlaylistLessons(playlistId: string): Promise<Lesson[]> {
   "use cache";
-  cacheLife("hours");
+  // Playlists gain a lesson every week or two, not every hour. `days` (24h
+  // revalidate) matches the real change rate; `cacheTag` below is the escape
+  // hatch for publishing a video and wanting it live immediately.
+  cacheLife("days");
   cacheTag(`yt-${playlistId}`);
 
   const apiKey = process.env.YOUTUBE_API_KEY;

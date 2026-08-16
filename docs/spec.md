@@ -613,7 +613,8 @@ Mobile, p75 (Vercel Speed Insights):
 Enforcement:
 - Lighthouse CI on every preview deploy (GitHub Actions or Vercel checks).
 - `next-bundle-analyzer` snapshot on main; PR fails if home JS > 100 KB gz.
-- Cache Components (Next 16) on every static surface; `use cache` + `cacheLife("hours")` on Lab Note pages; `cacheTag("lab")` for revalidation.
+- Cache Components (Next 16) on every static surface. Repo-local MDX content (Lab Notes, sessions, services, case studies, workshops, mentorship) uses `use cache` + `cacheLife("max")` — it cannot change between deployments, so a time-based revalidate only rewrites identical bytes into the ISR store on a timer. Invalidation is by `cacheTag` (`revalidateTag("lab")` etc.) or redeployment. Remote data (YouTube playlists) uses `cacheLife("days")` with `cacheTag("yt-<playlistId>")`.
+- Never leave `use cache` without an explicit `cacheLife`: the default profile revalidates every 15 minutes, and Cache Components multiplies each page into ~5–8 separately-billed cache segments. This combination exhausted the Vercel free-tier ISR write quota (200k/month, team-wide) in 2026-08 on near-zero traffic.
 - Images: `next/image` with `priority` on LCP image only; `sizes` attribute on every responsive image.
 - Fonts: `next/font` `display: swap`; only weights actually used (400, 500, 600 — no 300 or 800 in v1).
 - No client-side state libraries (no Redux/Zustand). Audit bot uses `useReducer`.

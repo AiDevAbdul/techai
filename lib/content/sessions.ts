@@ -18,7 +18,12 @@ export type Session = {
 
 async function loadAll(): Promise<Session[]> {
   "use cache";
-  cacheLife("hours");
+  // Sessions ship as MDX in the repo, so this content cannot change between
+  // deployments — an hourly revalidate just rewrote identical bytes into the
+  // ISR store every hour, per cached segment. `max` (30d) leaves deploys and
+  // `revalidateTag('sessions')` as the invalidation paths, which is the whole
+  // truth about when this data actually changes.
+  cacheLife("max");
   cacheTag("sessions");
 
   let entries: string[];

@@ -2,6 +2,7 @@ import "server-only";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { cacheLife } from "next/cache";
 import {
   serviceFrontmatterSchema,
   type ServiceFrontmatter,
@@ -28,6 +29,7 @@ export type Service = {
 
 async function loadAll(): Promise<Service[]> {
   "use cache";
+  cacheLife("max");
   const entries = await fs.readdir(CONTENT_DIR);
   const mdxFiles = entries.filter((name) => name.endsWith(".mdx"));
   const services = await Promise.all(

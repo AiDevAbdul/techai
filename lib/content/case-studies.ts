@@ -2,6 +2,7 @@ import "server-only";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { cacheLife } from "next/cache";
 import {
   caseStudyFrontmatterSchema,
   type CaseStudyFrontmatter,
@@ -34,6 +35,7 @@ export type CaseStudy = {
  */
 async function loadAll(): Promise<CaseStudy[]> {
   "use cache";
+  cacheLife("max");
   const entries = await fs.readdir(CONTENT_DIR);
   const mdxFiles = entries.filter((name) => name.endsWith(".mdx"));
   const studies = await Promise.all(
