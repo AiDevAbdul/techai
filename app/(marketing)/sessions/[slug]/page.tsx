@@ -8,11 +8,7 @@ import PlausiblePageEvent from "@/components/brand/PlausiblePageEvent";
 import Prose from "@/components/ui/prose";
 import YouTubePlayer from "@/components/sessions/YouTubePlayer";
 import SessionNotifyForm from "@/components/sessions/SessionNotifyForm";
-import {
-  getAllSessions,
-  getSessionBySlug,
-  getSessionSlugs,
-} from "@/lib/content/sessions";
+import { getSessionBySlug, getSessionSlugs } from "@/lib/content/sessions";
 
 /*
  * /sessions/[slug] — session detail page.

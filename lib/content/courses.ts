@@ -95,7 +95,17 @@ async function withLessons(meta: CourseMeta): Promise<Course> {
 }
 
 export function getAllCourseMeta(): Omit<CourseMeta, "staticLessons">[] {
-  return COURSE_META.map(({ staticLessons: _s, ...rest }) => rest);
+  return COURSE_META.map(
+    ({ slug, title, subtitle, description, audience, playlistId, status }) => ({
+      slug,
+      title,
+      subtitle,
+      description,
+      audience,
+      playlistId,
+      status,
+    }),
+  );
 }
 
 export async function getAllCourses(): Promise<Course[]> {

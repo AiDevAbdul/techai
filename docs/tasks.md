@@ -153,7 +153,7 @@ Free course catalog at `/learn` backed by YouTube Data API v3. Three pages: cata
 
 **Courses shipped:**
 - Social Media Management (`PLYyJgoGsSKNsHeIMRps-qVuWRy0oms_Pc`) — 9 lessons, status: available
-- AI Driven Development with Claude Code (`PLYyJgoGsSKNul4KN8mPiaYgGXQQIGDr_E`) — 12 lessons, status: in-progress (new lessons added weekly)
+- AI Driven Development with Claude Code (`PLYyJgoGsSKNul4KN8mPiaYgGXQQIGDr_E`) — 12 lessons, status: available (was `in-progress`; `lib/content/courses.ts` is the source of truth)
 - Agentic AI — status: coming-soon (no playlistId yet; card shown as locked)
 
 **Implementation:**
@@ -237,3 +237,78 @@ unlabelled and a mentorship lead looked identical to a build lead in the inbox.
 **Verified 2026-08-15:** end-to-end email delivery confirmed by live production submission — owner notification and visitor auto-reply both delivered, `spf/dkim/dmarc=pass`. Note the graceful-degradation path means a misconfigured inbox looks identical to success from the UI; check Resend's log, not the toast.
 
 **Noted, not changed:** the budget dropdown is USD-denominated (`Under $5k` … `$40k+`), which reads oddly on a PKR mentorship enquiry. Needs a decision on whether to localise it or hide it for individual topics.
+
+---
+
+## #20 — Launch-readiness gaps: privacy policy, error boundaries, lint, stale surfaces
+
+**Status:** done · 2026-08-15. Four parallel workstreams, file ownership partitioned to avoid collisions.
+
+**Why:** a pre-launch audit found four gaps that the per-page task list never
+covered, because each one sits *between* pages rather than on one.
+
+**A — `/privacy` (new).** The site runs GA4 + Microsoft Clarity session
+recording + Plausible + Vercel Analytics and captures name/email through five
+forms, with no privacy policy at all. `app/(marketing)/privacy/page.tsx`
+follows the `/about` label-rail idiom (not `ui/prose.tsx` — that is the MDX
+render surface). Added to `app/sitemap.ts` and the footer's legal row.
+Content was written from the code, not from a template. Three disclosures
+worth knowing about:
+- `lib/audit/rate-limit.ts:52` keys Redis on `audit:start:${ip}` — **raw IP,
+  plain text, third-party store, 1h TTL.** Personal data under GDPR. Hashing
+  the IP is a one-line change that would let this sentence be removed.
+- The audit bot posts every visitor answer to Anthropic. Disclosed, plus a
+  "don't paste client names or credentials" caution — but **that warning
+  belongs on `/lab/audit` itself**, not only in the policy. Not yet done.
+- Plausible/GA4/Clarity are each env-gated, so "what is running" varies per
+  deploy. The policy discloses all five tools and tells the reader to assume
+  all five are on — the honest framing.
+Verified: no database or CRM anywhere in the codebase; form data goes to email
+only. The lab and sessions captures have no double opt-in.
+
+**B — error boundaries (new).** The app had zero. Added `app/not-found.tsx`,
+`app/error.tsx`, `app/global-error.tsx`. No segment-level `not-found.tsx`:
+`app/layout.tsx` is the only layout in the tree, so a group-level file would
+render identical chrome and only duplicate it (reasoning is commented in
+`not-found.tsx` so it is not re-litigated). Neither boundary renders
+`error.message` or a stack — only `error.digest`, labelled "Reference".
+- **No `loading.tsx` was added, deliberately.** Under `cacheComponents` (PPR)
+  a `loading.tsx` installs a Suspense boundary that begins streaming the body;
+  once headers are sent, `notFound()` can no longer set a real 404 and it
+  degrades to a soft 404 (200 + noindex). Adding one at the root or
+  `(marketing)` level would silently downgrade every dynamic-route 404.
+- `global-error.tsx` replaces the root layout, so next/font cannot run there
+  (font loaders are server-only, error boundaries must be client). It relies
+  on the `--font-serif` fallback chain in `styles/tokens.css` and re-renders
+  `data-theme` plus the pre-paint theme script by hand.
+
+**C — lint.** `npx eslint` now exits 0 repo-wide (was 1 error + 2 warnings).
+`components/learn/LessonListClient.tsx` was calling `setState` synchronously
+inside an effect; rewritten onto `useSyncExternalStore`, which is what
+localStorage-backed state actually wants. The subtle part: `getSnapshot`
+caches by raw storage string and returns the *identical* `Set` reference when
+unchanged — returning a fresh `new Set()` each call would loop forever.
+`getServerSnapshot` returns a shared empty set so the hydrated tree matches
+SSR and the real value lands on the post-hydration read. Gained cross-tab
+`storage` sync and hardened JSON parsing on the way. Fixed with no
+rule-disable comments.
+
+**D — stale surfaces.** `/sessions` and `/learn` shipped after the original
+8-page IA and two surfaces were never updated: `app/llms.txt/route.ts` (still
+listed 8 pages — now covers `/sessions`, `/learn` with course titles,
+`/lab/audit`, `/ur`) and the footer nav (omitted Learn and Sessions, leaving
+~47 lesson pages with no footer path). `app/sitemap.ts` had already been kept
+current. Also corrected this file: the Claude Code course was recorded here as
+`in-progress` while `lib/content/courses.ts` has had it `available`.
+
+**DoD:** `tsc --noEmit` clean, `npx eslint` exits 0, `npm run build` clean.
+Verified against a **production** server (`next start`), not dev: `/privacy`
+200 and prerendered static; `/nope`, `/work/xyz`, `/learn/foo/bar` all return
+genuine **404** status codes with branded chrome and the book-a-call CTA;
+footer renders `/privacy`, `/learn`, `/sessions`.
+
+**Known nit:** the 404 page inherits the default site `<title>` — Next's
+`not-found.tsx` cannot export `metadata`. Cosmetic; affects browser tab and
+history entries only.
+
+**Still open (see #21):** the audit bot is dead in production.

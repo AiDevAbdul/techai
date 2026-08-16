@@ -9,8 +9,9 @@ function buildLlmsTxt(): string {
   return `# Abdul Wahab
 
 AI workflow consultant and technical educator. Builds routed, observable AI
-systems for operators and teaches the teams that run them. Three audiences:
-Operators, Teams, and Communities.
+systems for operators, and teaches — free video courses, live sessions, and
+paid training — the people who run them. Three audiences: Operators, Teams,
+and Communities.
 
 ## Pages
 
@@ -19,9 +20,13 @@ Operators, Teams, and Communities.
 - [Services (audit, build, workshop, speaking)](${SITE_URL}/services)
 - [Mentorship & training (1:1 roadmaps, team training, talks — PKR pricing)](${SITE_URL}/mentorship)
 - [Workshops & speaking](${SITE_URL}/workshops)
+- [Sessions (live and recorded sessions)](${SITE_URL}/sessions)
+- [Learn (free video courses, lesson by lesson): "Free Social Media Management Course with AI" and "AI Driven Development with Claude Code" — both available; "Agentic AI" coming soon](${SITE_URL}/learn)
 - [Lab (field notes)](${SITE_URL}/lab)
+- [Workflow audit demo (streaming AI teardown of a described workflow)](${SITE_URL}/lab/audit)
 - [About](${SITE_URL}/about)
 - [Contact](${SITE_URL}/contact)
+- [اردو / Urdu landing page](${SITE_URL}/ur)
 
 ## Contact
 

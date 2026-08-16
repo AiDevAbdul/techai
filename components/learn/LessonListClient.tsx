@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { CheckCircle2, Circle, PlayCircle } from "lucide-react";
 import type { Lesson } from "@/lib/content/courses";
@@ -12,29 +12,112 @@ type Props = {
   isInProgress?: boolean;
 };
 
+/*
+ * Watched-lesson tracking is backed by localStorage, which is an *external
+ * store* — not React state. It is read through `useSyncExternalStore` so we
+ * never call setState from inside an effect (which would cascade renders) and
+ * so cross-tab writes stay in sync.
+ *
+ * Hydration safety: the server has no localStorage, so `getServerSnapshot`
+ * returns a shared empty set. React uses that same snapshot for the initial
+ * client render, so the hydrated markup matches the server HTML exactly; the
+ * real localStorage value is only adopted on the post-hydration re-read.
+ */
+
+const EMPTY_SEEN: ReadonlySet<string> = new Set<string>();
+
+/** Cached snapshots keyed by storage key, so getSnapshot is referentially stable. */
+const snapshotCache = new Map<
+  string,
+  { raw: string | null; value: ReadonlySet<string> }
+>();
+
+const listeners = new Map<string, Set<() => void>>();
+
 function storageKey(courseSlug: string) {
   return `learn-seen-${courseSlug}`;
 }
 
-function getSeen(courseSlug: string): Set<string> {
-  if (typeof window === "undefined") return new Set();
+function readRaw(key: string): string | null {
   try {
-    const raw = localStorage.getItem(storageKey(courseSlug));
-    return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
+    return localStorage.getItem(key);
   } catch {
-    return new Set();
+    // localStorage may be unavailable (private mode, blocked cookies)
+    return null;
   }
 }
 
-function markSeen(courseSlug: string, lessonSlug: string): Set<string> {
-  const seen = getSeen(courseSlug);
-  seen.add(lessonSlug);
+function parseSeen(raw: string | null): ReadonlySet<string> {
+  if (!raw) return EMPTY_SEEN;
   try {
-    localStorage.setItem(storageKey(courseSlug), JSON.stringify([...seen]));
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return EMPTY_SEEN;
+    return new Set(parsed.filter((v): v is string => typeof v === "string"));
   } catch {
-    // localStorage may be unavailable in some contexts
+    return EMPTY_SEEN;
   }
-  return seen;
+}
+
+function getSeenSnapshot(courseSlug: string): ReadonlySet<string> {
+  const key = storageKey(courseSlug);
+  const raw = readRaw(key);
+  const cached = snapshotCache.get(key);
+  // Return the identical Set when the underlying string is unchanged —
+  // useSyncExternalStore compares snapshots by reference.
+  if (cached && cached.raw === raw) return cached.value;
+  const value = parseSeen(raw);
+  snapshotCache.set(key, { raw, value });
+  return value;
+}
+
+function getServerSeenSnapshot(): ReadonlySet<string> {
+  return EMPTY_SEEN;
+}
+
+function emit(key: string) {
+  for (const listener of listeners.get(key) ?? []) listener();
+}
+
+function subscribeSeen(courseSlug: string, onChange: () => void): () => void {
+  const key = storageKey(courseSlug);
+  let forKey = listeners.get(key);
+  if (!forKey) {
+    forKey = new Set();
+    listeners.set(key, forKey);
+  }
+  forKey.add(onChange);
+
+  // Keep other tabs in sync.
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === null || event.key === key) onChange();
+  };
+  window.addEventListener("storage", onStorage);
+
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    forKey.delete(onChange);
+    if (forKey.size === 0) listeners.delete(key);
+  };
+}
+
+function markSeen(courseSlug: string, lessonSlug: string): void {
+  const key = storageKey(courseSlug);
+  const current = getSeenSnapshot(courseSlug);
+  if (current.has(lessonSlug)) return;
+  const next = [...current, lessonSlug];
+  try {
+    localStorage.setItem(key, JSON.stringify(next));
+  } catch {
+    // localStorage may be unavailable in some contexts — keep the in-memory
+    // snapshot correct anyway so the UI still reflects this session.
+    snapshotCache.set(key, {
+      raw: snapshotCache.get(key)?.raw ?? null,
+      value: new Set(next),
+    });
+    emit(key);
+    return;
+  }
+  emit(key);
 }
 
 export default function LessonListClient({
@@ -43,11 +126,24 @@ export default function LessonListClient({
   lessons,
   isInProgress,
 }: Props) {
-  const [seen, setSeen] = useState<Set<string>>(new Set());
+  const subscribe = useCallback(
+    (onChange: () => void) => subscribeSeen(courseSlug, onChange),
+    [courseSlug],
+  );
+  const getSnapshot = useCallback(
+    () => getSeenSnapshot(courseSlug),
+    [courseSlug],
+  );
 
+  const seen = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSeenSnapshot,
+  );
+
+  // Writing to the external store — not setState — so no cascading render.
   useEffect(() => {
-    const updated = markSeen(courseSlug, currentLessonSlug);
-    setSeen(new Set(updated));
+    markSeen(courseSlug, currentLessonSlug);
   }, [courseSlug, currentLessonSlug]);
 
   const seenCount = lessons.filter((l) => seen.has(l.slug)).length;
