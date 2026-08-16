@@ -31,6 +31,7 @@ const STATIC_PATHS: Array<{
   { path: "/learn", changeFrequency: "weekly", priority: 0.85 },
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
   { path: "/contact", changeFrequency: "yearly", priority: 0.6 },
+  { path: "/privacy", changeFrequency: "yearly", priority: 0.2 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

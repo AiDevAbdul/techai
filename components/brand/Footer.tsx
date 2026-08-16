@@ -20,7 +20,9 @@ const COPYRIGHT_YEAR = new Date().getFullYear();
  * Columns:
  *  1. Brand wordmark + short positioning line + copyright
  *  2. Site map (IA per spec §4)
- *  3. Contact + theme toggle + /ur locale stub
+ *  3. Contact + theme toggle
+ *
+ * Bottom row: copyright + legal/locale links (Privacy, /ur).
  *
  * The /ur link is a v1 stub that goes to a "coming soon" page (spec §0 +
  * plan §2 Day 2 — keeps the link from being a broken 404). Full Urdu UI is
@@ -34,6 +36,8 @@ const SITE_MAP = [
   { href: "/services", label: "Services" },
   { href: "/mentorship", label: "Mentorship" },
   { href: "/workshops", label: "Workshops" },
+  { href: "/sessions", label: "Sessions" },
+  { href: "/learn", label: "Learn" },
   { href: "/lab", label: "Lab Notes" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -130,13 +134,21 @@ export default function Footer() {
           <p className="text-ink-secondary text-caption">
             © {COPYRIGHT_YEAR} Abdul Wahab. All rights reserved.
           </p>
-          <Link
-            href="/ur"
-            className="text-ink-secondary hover:text-ink text-caption transition-colors duration-[var(--dur-fast)]"
-            aria-label="اردو — coming soon"
-          >
-            اردو
-          </Link>
+          <div className="flex items-center gap-5">
+            <Link
+              href="/privacy"
+              className="text-ink-secondary hover:text-ink text-caption transition-colors duration-[var(--dur-fast)]"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/ur"
+              className="text-ink-secondary hover:text-ink text-caption transition-colors duration-[var(--dur-fast)]"
+              aria-label="اردو — coming soon"
+            >
+              اردو
+            </Link>
+          </div>
         </div>
       </Container>
     </footer>
