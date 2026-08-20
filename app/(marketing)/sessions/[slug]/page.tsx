@@ -77,7 +77,7 @@ export default async function SessionPage({
           "@type": "VideoObject",
           name: frontmatter.title,
           description: frontmatter.summary,
-          uploadDate: frontmatter.date,
+          ...(frontmatter.date ? { uploadDate: frontmatter.date } : {}),
           embedUrl: `https://www.youtube-nocookie.com/embed/${frontmatter.youtubeId}`,
           author: {
             "@type": "Person",
@@ -97,7 +97,7 @@ export default async function SessionPage({
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <Container as="section" className="pt-14 pb-10 lg:pt-22 lg:pb-14">
         <Link
-          href="/sessions"
+          href="/learn#sessions-heading"
           className="text-ink-secondary hover:text-ink text-footnote inline-flex items-center gap-1.5 transition-colors duration-[var(--dur-fast)]"
         >
           <ArrowLeft size={14} strokeWidth={1.75} aria-hidden />
@@ -123,15 +123,21 @@ export default async function SessionPage({
           {frontmatter.summary}
         </p>
 
-        <p className="text-ink-tertiary text-footnote mt-4 flex flex-wrap items-center gap-4">
-          {frontmatter.duration && (
-            <span className="inline-flex items-center gap-1.5">
-              <Clock size={13} strokeWidth={1.75} aria-hidden />
-              {frontmatter.duration} min
-            </span>
-          )}
-          <time dateTime={frontmatter.date}>{formatDate(frontmatter.date)}</time>
-        </p>
+        {(frontmatter.duration || frontmatter.date) && (
+          <p className="text-ink-tertiary text-footnote mt-4 flex flex-wrap items-center gap-4">
+            {frontmatter.duration && (
+              <span className="inline-flex items-center gap-1.5">
+                <Clock size={13} strokeWidth={1.75} aria-hidden />
+                {frontmatter.duration} min
+              </span>
+            )}
+            {frontmatter.date && (
+              <time dateTime={frontmatter.date}>
+                {formatDate(frontmatter.date)}
+              </time>
+            )}
+          </p>
+        )}
       </Container>
 
       {/* ── Video / placeholder ────────────────────────────────────────── */}

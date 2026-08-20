@@ -2,17 +2,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Clock, BookOpen, Lock } from "lucide-react";
 import Container from "@/components/brand/Container";
+import SessionsFilterGrid from "@/components/sessions/SessionsFilterGrid";
 import { getAllCourses } from "@/lib/content/courses";
+import { getAllSessions } from "@/lib/content/sessions";
 
 export const metadata: Metadata = {
-  title: "Learn — Free courses by Abdul Wahab",
+  title: "Learn — Free courses and sessions by Abdul Wahab",
   description:
-    "Free video courses on Social Media Management and AI Driven Development with Claude Code. Practical, beginner-friendly, no sign-up required.",
+    "Free video courses on Social Media Management and AI Driven Development with Claude Code, plus live and recorded sessions on Agentic AI, Python, and social strategy. No sign-up required.",
   alternates: { canonical: "/learn" },
   openGraph: {
-    title: "Learn — Free courses by Abdul Wahab",
+    title: "Learn — Free courses and sessions by Abdul Wahab",
     description:
-      "Free video courses on Social Media Management and AI Driven Development. No sign-up required.",
+      "Free video courses plus live and recorded sessions on Agentic AI, Python automation, and social media strategy. No sign-up required.",
     url: "/learn",
     type: "website",
   },
@@ -41,7 +43,10 @@ function totalMinutes(lessons: { duration: string }[]): string {
 }
 
 export default async function LearnPage() {
-  const courses = await getAllCourses();
+  const [courses, sessions] = await Promise.all([
+    getAllCourses(),
+    getAllSessions(),
+  ]);
 
   return (
     <main id="main" className="flex flex-1 flex-col">
@@ -162,6 +167,28 @@ export default async function LearnPage() {
           })}
         </ul>
       </Container>
+
+      {/* Sessions */}
+      <section aria-labelledby="sessions-heading" className="border-separator border-t">
+        <Container className="py-18 lg:py-22">
+          <p className="text-ink-secondary text-eyebrow tracking-[var(--track-eyebrow)] uppercase">
+            Sessions
+          </p>
+          <h2
+            id="sessions-heading"
+            className="serif text-ink mt-3 max-w-[24ch] text-[clamp(1.75rem,3.5vw,2.5rem)] leading-[1.1] tracking-[var(--track-title)]"
+          >
+            Live and recorded, outside the curriculum.
+          </h2>
+          <p className="text-ink-secondary text-callout mt-4 max-w-[54ch] leading-[1.55]">
+            One-off sessions on Agentic AI, Python automation, and social
+            media strategy — watch a recording or join the next live one.
+          </p>
+          <div className="mt-10">
+            <SessionsFilterGrid sessions={sessions} />
+          </div>
+        </Container>
+      </section>
 
       {/* CTA band */}
       <section className="border-separator bg-surface-secondary border-t">

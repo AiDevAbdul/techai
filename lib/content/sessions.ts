@@ -48,7 +48,11 @@ async function loadAll(): Promise<Session[]> {
     }),
   );
 
-  sessions.sort((a, b) => b.frontmatter.date.localeCompare(a.frontmatter.date));
+  // Undated ("no expected date yet") sessions sort after every dated one —
+  // "" is always <= a real YYYY-MM-DD string, so they land at the end here.
+  sessions.sort((a, b) =>
+    (b.frontmatter.date ?? "").localeCompare(a.frontmatter.date ?? ""),
+  );
   return sessions;
 }
 

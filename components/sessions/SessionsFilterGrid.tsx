@@ -23,6 +23,7 @@ const TOPIC_OPTIONS = [
   { value: "Agentic AI", label: "Agentic AI" },
   { value: "Python Programming", label: "Python" },
   { value: "Social Media Marketing", label: "Social Media" },
+  { value: "AI Careers", label: "AI Careers" },
 ] as const satisfies ReadonlyArray<{ value: string; label: string }>;
 
 type TopicFilter = (typeof TOPIC_OPTIONS)[number]["value"];
@@ -110,7 +111,7 @@ function SessionCard({ session }: { session: Session }) {
                 {frontmatter.duration} min
               </span>
             )}
-            <span>{formatDate(frontmatter.date)}</span>
+            {frontmatter.date && <span>{formatDate(frontmatter.date)}</span>}
           </p>
           <span
             className={cn(

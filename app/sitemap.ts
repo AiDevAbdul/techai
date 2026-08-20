@@ -25,7 +25,6 @@ const STATIC_PATHS: Array<{
   { path: "/services", changeFrequency: "monthly", priority: 0.9 },
   { path: "/mentorship", changeFrequency: "monthly", priority: 0.9 },
   { path: "/workshops", changeFrequency: "monthly", priority: 0.85 },
-  { path: "/sessions", changeFrequency: "weekly", priority: 0.82 },
   { path: "/lab", changeFrequency: "weekly", priority: 0.8 },
   { path: "/lab/audit", changeFrequency: "monthly", priority: 0.85 },
   { path: "/learn", changeFrequency: "weekly", priority: 0.85 },
@@ -68,7 +67,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((s) => s.frontmatter.type === "recorded")
     .map((s) => ({
       url: `${SITE_URL}/sessions/${s.frontmatter.slug}`,
-      lastModified: new Date(s.frontmatter.date),
+      lastModified: s.frontmatter.date ? new Date(s.frontmatter.date) : now,
       changeFrequency: "monthly",
       priority: 0.75,
     }));

@@ -118,7 +118,14 @@ export const pastEngagementsFileSchema = z.object({
 
 /*
  * Sessions — spec extension (post-v1). Two types: `recorded` (has a youtubeId)
- * and `upcoming` (no video yet). Three topics match the three audience tracks.
+ * and `upcoming` (no video yet). Topics span the audience tracks plus
+ * "AI Careers" for roadmap/skill-choice sessions that aren't tied to one
+ * specific domain.
+ *
+ * `date` is optional — a future session can be announced before a date is
+ * set ("don't mention any expected date for now"). `loadAll` in
+ * `lib/content/sessions.ts` sorts undated sessions to the end; the UI hides
+ * the date line entirely when it's absent rather than showing a placeholder.
  *
  * `resources` is optional so sessions can ship without attachments.
  */
@@ -131,8 +138,16 @@ export type SessionResource = z.infer<typeof sessionResourceSchema>;
 export const sessionFrontmatterSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/, "slug must be lowercase kebab-case"),
   title: z.string().min(1),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD"),
-  topic: z.enum(["Agentic AI", "Python Programming", "Social Media Marketing"]),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD")
+    .optional(),
+  topic: z.enum([
+    "Agentic AI",
+    "Python Programming",
+    "Social Media Marketing",
+    "AI Careers",
+  ]),
   type: z.enum(["recorded", "upcoming"]),
   summary: z.string().min(1),
   duration: z.number().int().min(1).optional(),
