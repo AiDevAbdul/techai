@@ -51,6 +51,10 @@ const INBOX =
   process.env.WORKSHOP_INBOX ??
   process.env.CONTACT_INBOX ??
   "info@abdulwahabai.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://abdulwahabai.com";
+const WHATSAPP_CHANNEL_URL = "https://whatsapp.com/channel/0029VaCUtI5FMqrU9qZ4so13";
+const FACEBOOK_COMMUNITY_URL = "https://www.facebook.com/groups/actiondigital";
+const YOUTUBE_URL = "https://youtube.com/aidevabdul";
 
 async function verifyHCaptcha(token: string | null): Promise<boolean> {
   const secret = process.env.HCAPTCHA_SECRET;
@@ -146,15 +150,40 @@ export async function submitDistrictRegistration(
     data.notes || "(none)",
   ];
 
-  // Best-effort — the DB write above is the source of truth for demand,
-  // this is just Abdul's heads-up.
-  await sendEmail({
-    to: INBOX,
-    from: FROM_ADDRESS,
-    replyTo: data.email,
-    subject: `District registration — ${data.district}, ${data.province} (${deliveryLabel})`,
-    text: ownerLines.join("\n"),
-  });
+  const firstName = data.name.trim().split(/\s+/)[0] ?? data.name;
+  const confirmLines = [
+    `Hi ${firstName},`,
+    ``,
+    `You're registered for a ${deliveryLabel.toLowerCase()} session in ${data.district}, ${data.province}. I'll email you as soon as a date is confirmed — enough people asking for the same district is what gets a session scheduled, so the more the merrier.`,
+    ``,
+    `In the meantime, join one of these for updates and free learning:`,
+    ``,
+    `WhatsApp channel: ${WHATSAPP_CHANNEL_URL}`,
+    `Facebook community: ${FACEBOOK_COMMUNITY_URL}`,
+    `YouTube: ${YOUTUBE_URL}`,
+    `Free courses (Social Media Marketing, AI Driven Development): ${SITE_URL}/learn`,
+    ``,
+    `— Abdul`,
+    `abdulwahabai.com`,
+  ];
+
+  // Best-effort — the DB write above is the source of truth for demand;
+  // both sends below are just notifications and never block the response.
+  await Promise.all([
+    sendEmail({
+      to: INBOX,
+      from: FROM_ADDRESS,
+      replyTo: data.email,
+      subject: `District registration — ${data.district}, ${data.province} (${deliveryLabel})`,
+      text: ownerLines.join("\n"),
+    }),
+    sendEmail({
+      to: data.email,
+      from: FROM_ADDRESS,
+      subject: `You're registered — ${data.district} session`,
+      text: confirmLines.join("\n"),
+    }),
+  ]);
 
   return {
     ok: true,
