@@ -82,7 +82,7 @@ export default function AboutPage() {
         </p>
         <p className="text-ink-secondary text-footnote mt-8 inline-flex items-center gap-2">
           <MapPin size={14} strokeWidth={1.75} aria-hidden />
-          Karachi, Pakistan · working with teams across South Asia and the GCC
+          Peshawar, Pakistan · working with teams across South Asia and the GCC
         </p>
       </Container>
 

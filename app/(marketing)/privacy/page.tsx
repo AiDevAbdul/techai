@@ -144,7 +144,7 @@ export default function PrivacyPage() {
           anything deleted, email <Mail /> and it&rsquo;s done.
         </p>
         <p>
-          I am the data controller. I&rsquo;m based in Karachi, Pakistan, and
+          I am the data controller. I&rsquo;m based in Peshawar, Pakistan, and
           the services this site uses store data on servers in the United
           States and the European Union.
         </p>
@@ -459,7 +459,7 @@ export default function PrivacyPage() {
                 Questions about any of this?
               </h2>
               <p className="text-ink-secondary text-callout mt-4 leading-[1.55]">
-                Abdul Wahab, Karachi, Pakistan. Write to <Mail /> &mdash;
+                Abdul Wahab, Peshawar, Pakistan. Write to <Mail /> &mdash;
                 privacy questions get answered by the same person who wrote the
                 code they&rsquo;re about.
               </p>

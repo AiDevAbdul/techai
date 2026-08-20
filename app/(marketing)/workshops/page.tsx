@@ -502,7 +502,7 @@ export default async function WorkshopsPage() {
                     Travel
                   </dt>
                   <dd className="mt-2 max-w-[36ch] leading-[1.55]">
-                    Karachi-based. On-site in Pakistan, GCC, and remote
+                    Peshawar-based. On-site in Pakistan, GCC, and remote
                     anywhere. Outside that, ask.
                   </dd>
                 </div>
