@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ArrowRight, Sparkles, Users, Wrench } from "lucide-react";
 import Container from "@/components/brand/Container";
 import Pill from "@/components/ui/pill";
@@ -10,10 +11,57 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import WorkshopInquiryForm from "@/components/forms/WorkshopInquiryForm";
+import DistrictSessionForm from "@/components/forms/DistrictSessionForm";
 import {
   getWorkshopTopics,
   getPastEngagements,
 } from "@/lib/content/workshops";
+import { getTopDistricts } from "@/lib/db/district-registrations";
+
+/*
+ * Top-districts list is uncached, live DB data — under Cache Components it
+ * must sit behind its own Suspense boundary so it doesn't force the whole
+ * /workshops route to render dynamically.
+ */
+async function TopDistrictsList() {
+  const topDistricts = await getTopDistricts(5);
+  if (topDistricts.length === 0) {
+    return (
+      <p className="text-ink-secondary text-footnote mt-4">
+        Registrations open — check back soon.
+      </p>
+    );
+  }
+  return (
+    <ol className="border-separator divide-separator mt-4 divide-y border-y" role="list">
+      {topDistricts.map((d, i) => (
+        <li
+          key={d.district}
+          className="flex items-baseline justify-between gap-4 py-3"
+        >
+          <span className="text-ink text-footnote flex items-baseline gap-3">
+            <span className="text-ink-tertiary text-caption tabular-nums">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            {d.district}
+          </span>
+          <span className="text-ink-secondary text-caption tabular-nums">
+            {d.count} {d.count === 1 ? "registration" : "registrations"}
+          </span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function TopDistrictsSkeleton() {
+  return (
+    <div
+      className="border-separator mt-4 h-[8.5rem] animate-pulse border-y bg-[color:var(--surface-secondary)]"
+      aria-hidden
+    />
+  );
+}
 
 /*
  * /workshops — spec §7.5.
@@ -24,7 +72,9 @@ import {
  *  3. Topics catalog accordion (10–15 items, from content/workshops/topics.mdx)
  *  4. Past engagements dated list (≥3, from content/workshops/past-engagements.mdx)
  *  5. Outcomes ("teams leave with…")
- *  6. Inquiry form (Server Action → Resend)
+ *  6. District registration ("Bring this to your district") — Server Action →
+ *     Supabase Postgres, top-5-by-demand list rendered live from the DB
+ *  7. Inquiry form (Server Action → Resend)
  *
  * The optional testimonial slot (spec §7.5 item 6) is dropped per the
  * task contract: Q3 (which testimonials we have permission to publish) is
@@ -382,7 +432,48 @@ export default async function WorkshopsPage() {
         </Container>
       </section>
 
-      {/* ── 6. Inquiry form ───────────────────────────────────────────── */}
+      {/* ── 6. District registration ──────────────────────────────────── */}
+      <section
+        id="districts"
+        aria-labelledby="districts-heading"
+        className="border-separator border-t"
+      >
+        <Container className="py-22">
+          <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
+            <div>
+              <p className="text-ink-secondary text-eyebrow tracking-[var(--track-eyebrow)] uppercase">
+                Districts
+              </p>
+              <h2
+                id="districts-heading"
+                className="serif text-ink mt-4 max-w-[18ch] text-[clamp(2rem,4.5vw,3rem)] leading-[1.05] tracking-[var(--track-title)]"
+              >
+                Bring this to your district.
+              </h2>
+              <p className="text-ink-secondary text-callout mt-5 max-w-[40ch] leading-[1.55]">
+                Register your interest — online or onsite — and I&rsquo;ll
+                schedule the next &ldquo;Effective Use of AI&rdquo; session
+                where demand is highest, starting with KP.
+              </p>
+
+              <div className="mt-10">
+                <p className="text-ink text-caption tracking-[0.04em] uppercase">
+                  Top districts by demand
+                </p>
+                <Suspense fallback={<TopDistrictsSkeleton />}>
+                  <TopDistrictsList />
+                </Suspense>
+              </div>
+            </div>
+
+            <div className="bg-surface-elevated border-separator rounded-2xl border p-7 lg:p-10">
+              <DistrictSessionForm />
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ── 7. Inquiry form ───────────────────────────────────────────── */}
       <section
         id="inquiry"
         aria-labelledby="inquiry-heading"

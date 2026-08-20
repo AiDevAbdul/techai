@@ -452,7 +452,8 @@ Per `my-suggestions.md §11`:
 4. Past engagements (logo wall **or** dated list — minimum 3 at launch).
 5. Outcomes ("teams leave with…").
 6. One testimonial.
-7. Inquiry form: org, role, audience size, format, target dates, notes.
+7. District registration ("Bring this to your district"): individual/community signup (name, email, phone/WhatsApp [required], province, district, delivery mode [online/onsite], notes [optional]) — no org field, distinct from the inquiry form below. Persists to a dedicated Supabase Postgres table (`district_registrations`), which is the source of truth for a live "top 5 districts by demand" list rendered on the page. Server-only access via `DATABASE_URL` (Supavisor pooler) — no client-side Supabase calls, no RLS policies (default-deny; all writes/reads go through the Server Action and Server Component). District/province reference data lives in `lib/content/districts.ts`.
+8. Inquiry form: org, role, audience size, format, target dates, notes.
 
 ### 7.6 `/lab` — Index
 - Editorial list: date · category · title · 1-line tease.
